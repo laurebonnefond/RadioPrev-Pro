@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DecoPrev — Protocoles de Décontamination</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#22c55e;--ad:rgba(34,197,94,.1);--w:#f59e0b;--d:#ef4444;--g:#22c55e;--p:#a78bfa;--tl:#2dd4bf;--sky:#38bdf8;--r:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f5f9;--s:#fff;--s2:#e8edf4;--s3:#dce3ed;--bd:#c5cdd8;--t:#1e293b;--tm:#64748b;--a:#16a34a;--ad:rgba(22,163,74,.08);--d:#dc2626;--g:#16a34a;--p:#7c3aed;--tl:#0d9488;--sky:#0284c7}}
+:root[data-theme="dark"]{--bg:#0b0f16;--s:#111827}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden}
+.app{max-width:1100px;margin:0 auto;padding:16px 14px 60px}
+header{text-align:center;padding:20px 0 16px;border-bottom:1px solid var(--bd);margin-bottom:16px}
+header h1{font-size:1.5rem;font-weight:800;color:var(--a)}
+header .sub{color:var(--tm);font-size:.75rem;margin-top:3px}
+.badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--ad);color:var(--a);margin-top:5px;font-family:'JetBrains Mono',monospace}
+.tabs{display:flex;gap:2px;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:0;padding:7px 5px;border:none;background:0;color:var(--tm);font-family:inherit;font-size:.68rem;font-weight:500;cursor:pointer;border-radius:5px;transition:.2s;white-space:nowrap}
+.tab.active{background:var(--a);color:#fff}.tab:hover:not(.active){background:var(--s2)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--a);display:flex;align-items:center;gap:5px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:600px){.fg{grid-template-columns:1fr}}
+.fm{display:flex;flex-direction:column;gap:3px}
+label{font-size:.68rem;font-weight:500;color:var(--tm)}
+select,input[type="number"]{padding:7px 9px;border:1px solid var(--bd);border-radius:5px;background:var(--s2);color:var(--t);font-family:inherit;font-size:.78rem;outline:0}
+.btn{padding:7px 14px;border:none;border-radius:5px;font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s}
+.bp{background:var(--a);color:#fff}.bs{background:var(--s2);color:var(--t);border:1px solid var(--bd)}
+.actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:.73rem;margin-top:8px}
+th,td{padding:5px 7px;text-align:left;border-bottom:1px solid var(--bd)}
+th{color:var(--tm);font-weight:500;font-size:.63rem;text-transform:uppercase}
+.ib{padding:9px 12px;border-left:3px solid var(--a);background:var(--ad);border-radius:0 5px 5px 0;font-size:.73rem;line-height:1.7;margin-top:9px}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.63rem;font-weight:600}
+.tg{background:rgba(34,197,94,.14);color:var(--g)}.to{background:rgba(245,158,11,.14);color:var(--w)}.tr{background:rgba(239,68,68,.14);color:var(--d)}
+.step{display:flex;gap:10px;margin-bottom:10px;padding:10px 12px;border-radius:var(--r);background:var(--s2);border:1px solid var(--bd)}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.step-content{flex:1;font-size:.75rem;line-height:1.6}
+.step-content b{color:var(--a)}
+.alert-box{padding:12px;border-radius:var(--r);margin-bottom:10px;font-size:.75rem;line-height:1.6}
+.alert-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--d)}
+.alert-orange{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--w)}
+.alert-green{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--g)}
+.decision-tree{font-size:.73rem}
+.dt-q{padding:10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px}
+.dt-q b{color:var(--sky)}
+.dt-actions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.dt-btn{padding:5px 10px;border:1px solid var(--bd);border-radius:4px;background:var(--s);color:var(--t);font-size:.7rem;cursor:pointer;transition:.2s}
+.dt-btn:hover{border-color:var(--a);color:var(--a)}
+.dt-result{padding:10px;border-radius:var(--r);margin-top:8px;font-size:.73rem;line-height:1.7;display:none}
+.footer{text-align:center;padding:16px 0;font-size:.62rem;color:var(--tm);border-top:1px solid var(--bd);margin-top:24px;line-height:1.8}
+.hidden{display:none!important}
+@media print{body{background:#fff!important;color:#000!important}.tabs,.btn,.footer{display:none!important}.panel{display:block!important}.card{border:1px solid #ccc;break-inside:avoid;background:#fff!important}@page{margin:12mm}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>🧹 DecoPrev</h1>
+  <div class="sub">Protocoles de Décontamination — Triage Radiovictimes — Chélation</div>
+  <div class="badge">RadioPrev Pro 3/5 • NCRP 161 • ASN Guide n°20 • SGDSN</div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="sT('triage',this)">🏥 Triage</button>
+  <button class="tab" onclick="sT('ext',this)">🧴 Déco externe</button>
+  <button class="tab" onclick="sT('int',this)">💊 Déco interne</button>
+  <button class="tab" onclick="sT('plaie',this)">🩹 Plaie</button>
+  <button class="tab" onclick="sT('proto',this)">📋 Protocoles</button>
+</div>
+
+<!-- TRIAGE -->
+<div id="tab-triage" class="panel active">
+  <div class="card">
+    <h2>🏥 Arbre décisionnel — Triage radiovictimes</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:10px">Évaluation initiale d'une personne contaminée ou irradiée. Répondez aux questions dans l'ordre.</p>
+    <div id="triage-tree" class="decision-tree"></div>
+    <div class="actions"><button class="btn bs" onclick="resetTriage()">Recommencer</button></div>
+  </div>
+  <div class="card">
+    <h2>📊 Classification d'urgence radiologique</h2>
+    <table>
+      <thead><tr><th>Catégorie</th><th>Critères</th><th>Actions</th><th>Délai</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tr">UA — Urgence Absolue</span></td><td style="font-family:inherit;font-size:.68rem">Irradiation &gt;2 Gy corps entier, brûlures radio, vomissements &lt;2h, contamination interne actinides</td><td style="font-family:inherit;font-size:.68rem">SAMU + SPR + hôpital Percy/Curie, DTPA si actinides, NFS urgente</td><td style="font-family:inherit">Immédiat</td></tr>
+        <tr><td><span class="tag to">UR — Urgence Relative</span></td><td style="font-family:inherit;font-size:.68rem">Contamination externe significative, irradiation 0.5-2 Gy, plaie contaminée</td><td style="font-family:inherit;font-size:.68rem">Décontamination externe, prélèvements biologiques, dosimétrie, MdT</td><td style="font-family:inherit">&lt;4h</td></tr>
+        <tr><td><span class="tag tg">DI — Différé</span></td><td style="font-family:inherit;font-size:.68rem">Contamination légère, pas de symptômes, dose estimée &lt;100 mSv</td><td style="font-family:inherit;font-size:.68rem">Décontamination, analyses excréta J+1/J+3, suivi médical</td><td style="font-family:inherit">&lt;24h</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DÉCO EXTERNE -->
+<div id="tab-ext" class="panel">
+  <div class="card">
+    <h2>🧴 Décontamination externe — Protocole par zone</h2>
+    <div class="fg">
+      <div class="fm"><label>Zone contaminée</label>
+        <select id="ext-zone" onchange="showExtProto()">
+          <option value="">— Sélectionner —</option>
+          <option value="skin">Peau intacte — corps</option>
+          <option value="face">Visage / tête</option>
+          <option value="hands">Mains / doigts</option>
+          <option value="hair">Cheveux / cuir chevelu</option>
+          <option value="eyes">Yeux / muqueuses oculaires</option>
+          <option value="nose">Nez / fosses nasales</option>
+          <option value="mouth">Bouche / cavité buccale</option>
+          <option value="ears">Oreilles / conduits auditifs</option>
+        </select>
+      </div>
+      <div class="fm"><label>Type de contamination</label>
+        <select id="ext-type">
+          <option value="dry">Sèche (poussières, aérosols)</option>
+          <option value="wet">Humide (liquide, projection)</option>
+          <option value="mixed">Mixte</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div id="ext-proto" class="hidden"></div>
+  <div class="card">
+    <h2>📐 Seuils de contamination surfacique</h2>
+    <table>
+      <thead><tr><th>Type</th><th>Seuil de libération (Bq/cm²)</th><th>Objectif décontamination</th></tr></thead>
+      <tbody>
+        <tr><td>β/γ émetteurs</td><td>4 Bq/cm²</td><td>&lt;0.4 Bq/cm²</td></tr>
+        <tr><td>α émetteurs (hors actinides)</td><td>0.4 Bq/cm²</td><td>&lt;0.04 Bq/cm²</td></tr>
+        <tr><td>Actinides (Pu, Am, Cm)</td><td>0.04 Bq/cm²</td><td>Non détectable</td></tr>
+      </tbody>
+    </table>
+    <div class="ib">Arrêté du 5 mai 2009 — Valeurs de libération pour les surfaces. Le contrôle post-décontamination se fait au contaminamètre α/β avec sonde adaptée.</div>
+  </div>
+</div>
+
+<!-- DÉCO INTERNE / CHÉLATION -->
+<div id="tab-int" class="panel">
+  <div class="card">
+    <h2>💊 Traitements décorporants — Arbre décisionnel</h2>
+    <div class="fg">
+      <div class="fm"><label>Radionucléide incorporé (suspecté)</label>
+        <select id="int-nuc" onchange="showIntProto()">
+          <option value="">— Sélectionner —</option>
+          <option value="Pu">Plutonium (Pu-238, Pu-239)</option>
+          <option value="Am">Américium (Am-241)</option>
+          <option value="Cm">Curium (Cm-244)</option>
+          <option value="Np">Neptunium (Np-237)</option>
+          <option value="U">Uranium (U-234/235/238)</option>
+          <option value="Cs">Césium (Cs-137)</option>
+          <option value="Sr">Strontium (Sr-90)</option>
+          <option value="I">Iode (I-131)</option>
+          <option value="Co">Cobalt (Co-60)</option>
+          <option value="H3">Tritium (H-3)</option>
+          <option value="Po">Polonium (Po-210)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Voie d'incorporation</label>
+        <select id="int-pw"><option value="inh">Inhalation</option><option value="ing">Ingestion</option><option value="wound">Plaie</option></select>
+      </div>
+    </div>
+  </div>
+  <div id="int-proto" class="hidden"></div>
+</div>
+
+<!-- PLAIE CONTAMINÉE -->
+<div id="tab-plaie" class="panel">
+  <div class="card">
+    <h2>🩹 Prise en charge d'une plaie contaminée</h2>
+    <div class="step"><div class="step-num">1</div><div class="step-content"><b>Faire saigner</b> la plaie modérément (15-30 s). Ne pas exciser. Ne pas garroter. Favoriser l'élimination mécanique.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><b>Laver</b> abondamment au sérum physiologique ou eau tiède + savon doux. Brosser doucement les bords (pas le fond). Durée : 5 min minimum.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><b>Contrôler</b> au contaminamètre après chaque lavage. Objectif : retour au bruit de fond ou &lt;2× le bruit de fond.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><b>Si contamination résiduelle</b> après 3 lavages : application de pansement occlusif humide, NE PAS persister (risque d'abrasion → augmente l'absorption).</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><b>Prélèvements</b> : écouvillon de plaie, sang (NFS, lymphocytes, créatinine), urines 24h (à partir de J0).</div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-content"><b>Si actinides (Pu, Am, Cm)</b> : injection Ca-DTPA 1g IV dès que possible (&lt;2h idéal). Ne pas attendre les résultats de mesure.</div></div>
+    <div class="step"><div class="step-num">7</div><div class="step-content"><b>Pansement</b> + vaccination antitétanique si nécessaire. Déclaration AT. Information PCR + médecin du travail.</div></div>
+    <div class="ib" style="border-color:var(--d)">🚨 <b>Règle d'or :</b> La prise en charge vitale (hémorragie, détresse respiratoire) PRIME TOUJOURS sur la décontamination. Un blessé contaminé est d'abord un blessé.</div>
+  </div>
+</div>
+
+<!-- PROTOCOLES RÉGLEMENTAIRES -->
+<div id="tab-proto" class="panel">
+  <div class="card">
+    <h2>📋 Conduite à tenir par situation</h2>
+    <div class="fg" style="grid-template-columns:1fr">
+      <div class="fm"><label>Situation</label>
+        <select id="proto-sit" onchange="showProtoSit()">
+          <option value="">— Sélectionner —</option>
+          <option value="incident">Incident de contamination au poste de travail</option>
+          <option value="spread">Contamination étendue (local, atelier)</option>
+          <option value="transport">Accident de transport de matières radioactives</option>
+          <option value="source">Découverte de source orpheline</option>
+          <option value="malveillance">Acte malveillant / dispersion intentionnelle</option>
+          <option value="cnpe">Incident CNPE — contamination personnel</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div id="proto-result" class="hidden"></div>
+  <div class="card">
+    <h2>📞 Numéros d'urgence radioprotection</h2>
+    <table>
+      <thead><tr><th>Organisme</th><th>N°</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:inherit">ASN (Autorité de Sûreté Nucléaire)</td><td>01 40 19 86 00</td><td style="font-family:inherit">Déclaration ESS, conseil</td></tr>
+        <tr><td style="font-family:inherit">IRSN — Astreinte</td><td>01 58 35 88 88</td><td style="font-family:inherit">Expertise dosimétrique urgente</td></tr>
+        <tr><td style="font-family:inherit">SAMU (Centre 15)</td><td>15</td><td style="font-family:inherit">Urgence médicale</td></tr>
+        <tr><td style="font-family:inherit">HIA Percy — Service santé armées</td><td>01 41 46 60 00</td><td style="font-family:inherit">Centre de référence irradiés</td></tr>
+        <tr><td style="font-family:inherit">CEA — Bruyères-le-Châtel</td><td>01 69 26 40 00</td><td style="font-family:inherit">Expertise actinides</td></tr>
+        <tr><td style="font-family:inherit">Centre antipoison</td><td>Selon région</td><td style="font-family:inherit">Toxicologie radiologique</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="footer">DecoPrev v1.0 — Module RadioPrev Pro 3/5<br>NCRP 161 • ASN Guide n°20 • SGDSN<br>PréventIA-LaB © 2026</footer>
+</div>
+
+<script>
+function sT(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(btn)btn.classList.add('active')}
+
+// ═══ TRIAGE DECISION TREE ═══
+const TRIAGE_TREE=[
+  {q:"La victime est-elle consciente et respire-t-elle ?",opts:[
+    {t:"Non → Détresse vitale",res:"UA",action:"🚨 Réanimation immédiate. SAMU 15. La décontamination est SECONDAIRE. Stabiliser puis transférer en zone de décontamination."},
+    {t:"Oui → Consciente",next:1}
+  ]},
+  {q:"Y a-t-il des vomissements apparus dans les 2h suivant l'exposition ?",opts:[
+    {t:"Oui → Vomissements précoces",res:"UA",action:"🚨 Suspicion d'irradiation aiguë ≥2 Gy. NFS urgente (lymphocytes H+6/H+12/H+24/H+48). Transfert HIA Percy. Prélèvements biologiques. Si contamination associée : DTPA si actinides."},
+    {t:"Non",next:2}
+  ]},
+  {q:"Y a-t-il une contamination externe détectée (contaminamètre positif) ?",opts:[
+    {t:"Oui → Contaminé externe",next:3},
+    {t:"Non → Pas de contamination externe",next:4}
+  ]},
+  {q:"Le niveau de contamination est-il >100× le bruit de fond ?",opts:[
+    {t:"Oui → Contamination forte",res:"UR",action:"⚠️ Décontamination externe prioritaire (cf. onglet Déco externe). Déshabillage (élimine 80-90% de la contamination). Prélèvements nasaux bilatéraux (mouchage). Analyses excréta."},
+    {t:"Non → Contamination modérée",res:"DI",action:"Décontamination externe standard. Prélèvements nasaux. Urines 24h à J+1 et J+3. RDV médecin du travail."}
+  ]},
+  {q:"Y a-t-il une suspicion d'incorporation (inhalation, ingestion, plaie) ?",opts:[
+    {t:"Oui → Suspicion d'incorporation",res:"UR",action:"⚠️ Prélèvements nasaux bilatéraux immédiats. Urines 24h dès J0. Si actinides suspectés : Ca-DTPA 1g IV. Si I-131 : KI 130 mg. Anthroporadiométrie si disponible. Cf. onglet Déco interne."},
+    {t:"Non → Pas d'incorporation",res:"DI",action:"Surveillance dosimétrique. Suivi médical de routine. Déclaration PCR."}
+  ]},
+];
+
+let triageState=0;
+function renderTriage(){
+  const node=TRIAGE_TREE[triageState];
+  let html=`<div class="dt-q"><b>Question ${triageState+1} :</b> ${node.q}<div class="dt-actions">`;
+  node.opts.forEach((o,i)=>{
+    html+=`<button class="dt-btn" onclick="triageAnswer(${i})">${o.t}</button>`;
+  });
+  html+=`</div></div><div id="triage-result-${triageState}" class="dt-result"></div>`;
+  document.getElementById('triage-tree').innerHTML+=html;
+}
+function triageAnswer(i){
+  const node=TRIAGE_TREE[triageState];const opt=node.opts[i];
+  const cls=opt.res==='UA'?'alert-red':opt.res==='UR'?'alert-orange':'alert-green';
+  if(opt.res){
+    document.getElementById(`triage-result-${triageState}`).style.display='block';
+    document.getElementById(`triage-result-${triageState}`).innerHTML=`<div class="${cls}" style="margin-top:6px"><b>${opt.res==='UA'?'🚨 URGENCE ABSOLUE':opt.res==='UR'?'⚠️ URGENCE RELATIVE':'✅ DIFFÉRÉ'}</b><br>${opt.action}</div>`;
+  } else if(opt.next!==undefined){
+    triageState=opt.next;
+    renderTriage();
+  }
+}
+function resetTriage(){triageState=0;document.getElementById('triage-tree').innerHTML='';renderTriage()}
+
+// ═══ EXTERNAL DECONTAMINATION ═══
+const EXT_PROTO={
+  skin:{title:"Peau intacte — corps",steps:[
+    {n:1,t:"<b>Déshabiller</b> la victime (élimine 80-90% de la contamination). Vêtements dans sac étiqueté « contaminé »."},
+    {n:2,t:"<b>Douche tiède</b> (32-35°C, pas chaude !) au savon doux pH neutre. De haut en bas. Éviter de frotter agressivement."},
+    {n:3,t:"<b>Rincer abondamment</b> (5 min min). L'eau de rinçage est un déchet radioactif."},
+    {n:4,t:"<b>Contrôle</b> au contaminamètre après chaque lavage. Répéter 3× max si nécessaire."},
+    {n:5,t:"<b>Si persistant</b> : pansement occlusif humide. Ne pas abraser la peau (augmente l'absorption transcutanée)."},
+  ]},
+  face:{title:"Visage / tête",steps:[
+    {n:1,t:"<b>Protéger les yeux</b> avec compresses humides avant tout lavage."},
+    {n:2,t:"<b>Lavage doux</b> du front vers le bas, en évitant les yeux et la bouche. Savon doux."},
+    {n:3,t:"<b>Mouchage bilatéral</b> dans des compresses séparées (gauche/droite) → analyse."},
+    {n:4,t:"<b>Contrôle</b> zone par zone. Si contamination persistante péri-oculaire : avis ophtalmo."},
+  ]},
+  hands:{title:"Mains / doigts",steps:[
+    {n:1,t:"<b>Retirer bijoux</b> (bagues, montre) → sac étiqueté."},
+    {n:2,t:"<b>Brossage doux</b> des ongles avec brosse souple + savon. Pas de brosse métallique."},
+    {n:3,t:"<b>Trempage</b> dans solution tiède savonneuse 5 min si contamination sous-unguéale."},
+    {n:4,t:"<b>Solution de KMnO₄ 4%</b> puis bisulfite de sodium 5% si persistant (attention peau sensible)."},
+    {n:5,t:"<b>Contrôle</b> doigt par doigt, dessus et dessous. 3 lavages max."},
+  ]},
+  hair:{title:"Cheveux",steps:[
+    {n:1,t:"<b>Shampooing doux</b>, tête penchée en arrière (pas sur le visage). Eau tiède."},
+    {n:2,t:"<b>Rinçage abondant</b>. Ne pas utiliser de revitalisant (fixe la contamination)."},
+    {n:3,t:"<b>Si persistant</b> : couper les cheveux (tondeuse, pas rasoir — risque de micro-coupures)."},
+  ]},
+  eyes:{title:"Yeux / muqueuses oculaires",steps:[
+    {n:1,t:"<b>Irrigation immédiate</b> au sérum physiologique (500 ml minimum par œil). De l'intérieur vers l'extérieur."},
+    {n:2,t:"<b>Durée</b> : 15 min minimum. Paupières maintenues ouvertes."},
+    {n:3,t:"<b>Examen ophtalmo</b> obligatoire (lampe à fente) pour vérifier l'absence de lésion cornéenne."},
+    {n:4,t:"<b>Prélèvement</b> du liquide d'irrigation → analyse radio."},
+  ]},
+  nose:{title:"Fosses nasales",steps:[
+    {n:1,t:"<b>Mouchage bilatéral</b> dans des compresses séparées → étiqueter Gauche/Droite → analyse."},
+    {n:2,t:"<b>Rinçage</b> au sérum physiologique (type Rhino Horn ou seringue 20 mL)."},
+    {n:3,t:"<b>Le mouchage positif</b> signe une inhalation → déclencher le protocole contamination interne."},
+  ]},
+  mouth:{title:"Cavité buccale",steps:[
+    {n:1,t:"<b>Rinçage buccal</b> abondant à l'eau ou au sérum physiologique. Cracher (ne pas avaler)."},
+    {n:2,t:"<b>Brossage dentaire doux</b> si contamination persistante des gencives."},
+    {n:3,t:"<b>Si ingestion suspectée</b> : charbon activé dans les 2h (sauf tritium). Lavage gastrique si très récent et indication médicale."},
+  ]},
+  ears:{title:"Oreilles",steps:[
+    {n:1,t:"<b>Nettoyage externe</b> au coton imbibé de sérum physiologique."},
+    {n:2,t:"<b>Ne pas irriguer</b> le conduit auditif sans examen préalable (risque si tympan perforé)."},
+    {n:3,t:"<b>Si contamination du conduit</b> : aspiration douce par ORL."},
+  ]},
+};
+function showExtProto(){
+  const z=document.getElementById('ext-zone').value;
+  if(!z||!EXT_PROTO[z]){document.getElementById('ext-proto').classList.add('hidden');return}
+  const p=EXT_PROTO[z];
+  let html=`<div class="card"><h2>📋 ${p.title}</h2>`;
+  p.steps.forEach(s=>{html+=`<div class="step"><div class="step-num">${s.n}</div><div class="step-content">${s.t}</div></div>`});
+  html+=`<div class="ib">⏱️ <b>Objectif :</b> Contamination résiduelle &lt;2× bruit de fond OU 3 lavages max. Ne pas persister au-delà (risque d'abrasion cutanée → ↑ absorption).</div></div>`;
+  document.getElementById('ext-proto').innerHTML=html;
+  document.getElementById('ext-proto').classList.remove('hidden');
+}
+
+// ═══ INTERNAL DECONTAMINATION / CHELATION ═══
+const INT_PROTO={
+  Pu:{agent:"Ca-DTPA puis Zn-DTPA",urgency:"🚨 Immédiat (<2h)",proto:"Ca-DTPA 1g dans 250 mL NaCl 0.9% IV en 30 min. 1ère injection dès que possible. Relais Zn-DTPA 1g IV à J+1, 3-5×/sem pendant 2-4 sem. Surveillance : NFS, iono, créat, zinc sérique.",ci:"IR sévère, grossesse (relatif). Zn-DTPA préféré si grossesse.",efficacy:"Réduction dose 50-90% si administré <1h. Chute rapide après 24h.",monitoring:"Urines 24h fractionnées avant/après chaque injection. Activité urinaire = marqueur d'efficacité."},
+  Am:{agent:"Ca-DTPA puis Zn-DTPA",urgency:"🚨 Immédiat (<2h)",proto:"Identique Pu. Am-241 détectable en anthroporadiométrie (γ 59 keV) → suivi par mesure corps entier.",ci:"Idem Pu.",efficacy:"Très bonne pour Am systémique. Moins efficace si fixé dans l'os.",monitoring:"Anthroporadiométrie + urines 24h."},
+  Cm:{agent:"Ca-DTPA puis Zn-DTPA",urgency:"🚨 Immédiat",proto:"Identique Pu/Am.",ci:"Idem.",efficacy:"Similaire Am-241.",monitoring:"Urines 24h."},
+  Np:{agent:"Ca-DTPA puis Zn-DTPA",urgency:"⚠️ <6h",proto:"Identique Pu. Np-237 a un γ détectable → anthroporadiométrie possible.",ci:"Idem.",efficacy:"Bonne.",monitoring:"Anthroporadiométrie + urines."},
+  U:{agent:"Bicarbonate de sodium",urgency:"⚠️ <6h",proto:"NaHCO₃ 1.4% IV (500 mL en 4h) puis relais per os (4-8 g/j en 4 prises). Objectif : alcaliniser les urines (pH urinaire >7.5) pour réduire la néphrotoxicité de l'uranium. Durée : 3-5 jours.",ci:"Insuffisance cardiaque, HTA sévère.",efficacy:"Réduit la néphrotoxicité chimique. Effet limité sur la dose radiologique.",monitoring:"pH urinaire (objectif >7.5), créatinine, ionogramme, uranium urinaire."},
+  Cs:{agent:"Bleu de Prusse (Radiogardase®)",urgency:"⚠️ <24h",proto:"Ferric hexacyanoferrate 3g per os 3×/jour pendant 2-4 semaines. Piège le Cs dans le tube digestif → interruption du cycle entéro-hépatique. T½ bio passe de 70j à ~25j.",ci:"Aucune CI absolue. Colore les selles en bleu (prévenir le patient).",efficacy:"Réduit le T½ bio de 50-65%. Plus efficace si débuté tôt.",monitoring:"Cs-137 corps entier par anthroporadiométrie + activité fécale."},
+  Sr:{agent:"Aucun agent spécifique validé",urgency:"⚠️ Rapide",proto:"Pas de chélateur spécifique efficace. Alginate de sodium (10g per os) dans les premières heures peut réduire l'absorption GI. Calcium + phosphore per os pour dilution isotopique. Lavage gastrique si ingestion récente (<1h).",ci:"—",efficacy:"Limitée. Le Sr se fixe dans l'os quasi-irréversiblement.",monitoring:"Sr-90 urinaire (β⁻, mesure par Cherenkov ou scintillation liquide)."},
+  I:{agent:"Iodure de potassium (KI)",urgency:"🚨 Immédiat (idéal AVANT exposition)",proto:"KI 130 mg per os en dose unique adulte (65 mg enfant 3-12 ans, 32 mg enfant <3 ans). Bloque la captation thyroïdienne (98% si pris 2h avant, 90% si simultané, 50% si +6h). Répéter si exposition prolongée (1 dose/24h, max 10 jours).",ci:"Allergie à l'iode (rare), hyperthyroïdie non contrôlée. Précaution >40 ans (bénéfice/risque thyroïdien).",efficacy:"Excellente si pris dans les 6h. Quasi-nulle après 24h.",monitoring:"TSH, T3/T4 à J+15 et J+30. I-131 thyroïdien par anthroporadiométrie."},
+  Co:{agent:"Aucun chélateur spécifique",urgency:"⏳ Non urgent",proto:"Pas de traitement décorporant validé. Le cobalt a un T½ bio court (~9.5 jours). Hydratation + surveillance.",ci:"—",efficacy:"—",monitoring:"Co-60 corps entier par anthroporadiométrie (γ 1.17+1.33 MeV, très facile à détecter)."},
+  H3:{agent:"Dilution isotopique (eau)",urgency:"⏳ Dès que possible",proto:"Hyperhydratation forcée : 3-4 L d'eau/jour pendant 2-3 semaines. Le tritium (eau tritiée HTO) est éliminé avec l'eau corporelle. T½ bio passe de 10j à ~4-5j avec hyperhydratation.",ci:"Insuffisance cardiaque, insuffisance rénale sévère.",efficacy:"Bonne — réduit le T½ de 50%.",monitoring:"Tritium urinaire (scintillation liquide)."},
+  Po:{agent:"Aucun chélateur spécifique efficace",urgency:"🚨 Urgence médicale",proto:"Pas de chélateur efficace. Le BAL (dimercaprol) a été essayé avec efficacité limitée. Traitement symptomatique et de soutien. Le Po-210 est extrêmement toxique par ingestion (dose létale ~1 μg). Transfert en centre spécialisé.",ci:"—",efficacy:"Très limitée.",monitoring:"Po-210 urinaire + fécal. NFS rapprochée (aplasie médullaire)."},
+};
+function showIntProto(){
+  const nk=document.getElementById('int-nuc').value;
+  if(!nk||!INT_PROTO[nk]){document.getElementById('int-proto').classList.add('hidden');return}
+  const p=INT_PROTO[nk];
+  const urgCls=p.urgency.includes('🚨')?'alert-red':p.urgency.includes('⚠️')?'alert-orange':'alert-green';
+  document.getElementById('int-proto').innerHTML=`<div class="card">
+    <h2>💊 Traitement décorporant — ${nk}</h2>
+    <div class="${urgCls}" style="margin-bottom:10px"><b>Urgence :</b> ${p.urgency}</div>
+    <table>
+      <tr><td style="width:30%;font-family:inherit;font-weight:600">Agent</td><td style="font-family:inherit">${p.agent}</td></tr>
+      <tr><td style="font-family:inherit;font-weight:600">Protocole</td><td style="font-family:inherit;font-size:.7rem;line-height:1.6">${p.proto}</td></tr>
+      <tr><td style="font-family:inherit;font-weight:600">Contre-indications</td><td style="font-family:inherit">${p.ci}</td></tr>
+      <tr><td style="font-family:inherit;font-weight:600">Efficacité</td><td style="font-family:inherit">${p.efficacy}</td></tr>
+      <tr><td style="font-family:inherit;font-weight:600">Surveillance</td><td style="font-family:inherit">${p.monitoring}</td></tr>
+    </table>
+  </div>`;
+  document.getElementById('int-proto').classList.remove('hidden');
+}
+
+// ═══ SITUATION PROTOCOLS ═══
+const PROTOS={
+  incident:{title:"Incident de contamination au poste de travail",steps:[
+    "Évacuer la zone — faire reculer le personnel à distance",
+    "Baliser le périmètre contaminé (ruban + panneaux ☢️)",
+    "Identifier les personnes potentiellement contaminées",
+    "Contrôle au contaminamètre de chaque personne (mains, visage, vêtements)",
+    "Si positif : déshabillage + mise en sac des vêtements + douche",
+    "Prélèvements nasaux bilatéraux pour toute personne en zone",
+    "Informer : PCR → chef d'installation → médecin du travail → ASN si ESS",
+    "Prélèvements d'ambiance (frottis de surface, prélèvement d'air si disponible)",
+    "Analyse des dosimètres opérationnels des personnes présentes",
+    "Rapport d'événement dans les 24h"
+  ]},
+  cnpe:{title:"Incident CNPE — contamination personnel",steps:[
+    "Application du PUI si nécessaire (selon critères EDF)",
+    "Contrôle au portique C2/C3 — si alarme : orientation vers service médical",
+    "Déshabillage en zone contrôlée, mise en sac des vêtements",
+    "Douche de décontamination (portique prévu)",
+    "Contrôle post-douche — si persistant : 2ème passage + zones ciblées",
+    "Prélèvements nasaux bilatéraux — analyse spectro γ",
+    "Urines 24h si prélèvements nasaux positifs",
+    "Si actinides (MOX) : Ca-DTPA immédiat (stock médical CNPE)",
+    "Déclaration ESS ASN si critères atteints (guide ASN n°21)",
+    "Fiche d'événement SISERI — mise à jour dosimétrie"
+  ]},
+  source:{title:"Découverte de source orpheline",steps:[
+    "NE PAS TOUCHER — s'éloigner immédiatement (>10 m minimum)",
+    "Appeler le 15 (SAMU) + 18 (pompiers CMIR) + ASN",
+    "Baliser la zone (>10 m) — interdire l'accès",
+    "Identifier les personnes ayant pu manipuler la source",
+    "Si manipulation : mesure de dose externe (dosimètre si dispo) + contrôle contamination",
+    "Attendre l'équipe IRSN/CMIR — ne pas improviser la récupération",
+    "Déclaration d'événement (ASN + préfecture)"
+  ]},
+  transport:{title:"Accident de transport matières radioactives",steps:[
+    "Sécuriser la zone (périmètre >25 m)",
+    "Identifier le colis (étiquette TMD, numéro ONU, indice de transport)",
+    "Appeler le 18 (pompiers CMIR) + transporteur + expéditeur",
+    "NE PAS MANIPULER le colis endommagé",
+    "Contrôler le débit de dose ambiant à 1 m du colis",
+    "Si fuite détectée : élargir le périmètre, frottis de surface",
+    "Intervention CMIR (Cellule Mobile d'Intervention Radiologique)",
+  ]},
+  spread:{title:"Contamination étendue (local, atelier)",steps:[
+    "Évacuation immédiate de tout le personnel",
+    "Fermer portes/fenêtres si contamination atmosphérique suspectée",
+    "Couper la ventilation/CTA si risque de propagation",
+    "Contrôle radiologique de toutes les personnes évacuées",
+    "Cartographie de contamination de la zone (frottis systématiques)",
+    "Plan de décontamination des surfaces (voir seuils onglet Déco externe)",
+    "Information des autorités (ASN, inspection du travail, SDIS)"
+  ]},
+  malveillance:{title:"Dispersion intentionnelle (RDD / bombe sale)",steps:[
+    "🚨 ALERTER : 17 (police) + 15 (SAMU) + 18 (pompiers CMIR)",
+    "Éloignement immédiat >300 m — vent dans le dos",
+    "NE PAS toucher/ramasser quoi que ce soit",
+    "Plan ORSEC-TMR / ORSEC-NRBC activé par le préfet",
+    "Triage des victimes en zone de soutien (cf. onglet Triage)",
+    "Décontamination de masse (portiques, douches mobiles SDIS)",
+    "Prélèvements biologiques systématiques des personnes exposées",
+    "Gestion de crise (cellule COGIC / SGDSN)"
+  ]},
+};
+function showProtoSit(){
+  const k=document.getElementById('proto-sit').value;
+  if(!k||!PROTOS[k]){document.getElementById('proto-result').classList.add('hidden');return}
+  const p=PROTOS[k];
+  let html=`<div class="card"><h2>📋 ${p.title}</h2>`;
+  p.steps.forEach((s,i)=>{html+=`<div class="step"><div class="step-num">${i+1}</div><div class="step-content">${s}</div></div>`});
+  html+=`</div>`;
+  document.getElementById('proto-result').innerHTML=html;
+  document.getElementById('proto-result').classList.remove('hidden');
+}
+
+renderTriage();
+</script>
+</body>
+</html>

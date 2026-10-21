@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IrradPrev — Exposition Externe & Radioprotection</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#f59e0b;--ad:rgba(245,158,11,.1);--w:#f59e0b;--d:#ef4444;--g:#22c55e;--p:#a78bfa;--tl:#2dd4bf;--sky:#38bdf8;--r:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f5f9;--s:#fff;--s2:#e8edf4;--s3:#dce3ed;--bd:#c5cdd8;--t:#1e293b;--tm:#64748b;--a:#d97706;--ad:rgba(217,119,6,.08);--d:#dc2626;--g:#16a34a;--p:#7c3aed;--tl:#0d9488;--sky:#0284c7}}
+:root[data-theme="dark"]{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#f59e0b}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-padding-top:env(safe-area-inset-top,0)}html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden}
+.app{max-width:1140px;margin:0 auto;padding:16px 14px 60px}
+header{text-align:center;padding:20px 0 16px;border-bottom:1px solid var(--bd);margin-bottom:16px}
+header h1{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;color:var(--a)}
+header .sub{color:var(--tm);font-size:.75rem;margin-top:3px}
+.badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--ad);color:var(--a);margin-top:5px;font-family:'JetBrains Mono',monospace}
+.disc{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);padding:10px 12px;font-size:.7rem;line-height:1.7;color:var(--w);margin-bottom:14px}
+.tabs{display:flex;gap:2px;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;min-width:0;padding:7px 5px;border:none;background:0;color:var(--tm);font-family:inherit;font-size:.67rem;font-weight:500;cursor:pointer;border-radius:5px;transition:.2s;white-space:nowrap}
+.tab.active{background:var(--a);color:#000}.tab:hover:not(.active){background:var(--s2);color:var(--t)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--a);display:flex;align-items:center;gap:5px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:600px){.fg{grid-template-columns:1fr}}
+.fm{display:flex;flex-direction:column;gap:3px}.fm.full{grid-column:1/-1}
+label{font-size:.68rem;font-weight:500;color:var(--tm)}
+select,input[type="number"],input[type="text"]{padding:7px 9px;border:1px solid var(--bd);border-radius:5px;background:var(--s2);color:var(--t);font-family:inherit;font-size:.78rem;outline:0;transition:.2s}
+select:focus,input:focus{border-color:var(--a)}
+.btn{padding:7px 14px;border:none;border-radius:5px;font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s}
+.bp{background:var(--a);color:#000}.bp:hover{opacity:.88}
+.bs{background:var(--s2);color:var(--t);border:1px solid var(--bd)}
+.actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.dv{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;text-align:center;padding:12px}
+.du{font-size:.75rem;color:var(--tm);font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:.73rem;margin-top:8px}
+th,td{padding:5px 7px;text-align:left;border-bottom:1px solid var(--bd)}
+th{color:var(--tm);font-weight:500;font-size:.63rem;text-transform:uppercase;letter-spacing:.04em}
+td{font-family:'JetBrains Mono',monospace;font-size:.71rem}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.63rem;font-weight:600}
+.tg{background:rgba(34,197,94,.14);color:var(--g)}.to{background:rgba(245,158,11,.14);color:var(--w)}.tr{background:rgba(239,68,68,.14);color:var(--d)}
+.ib{padding:9px 12px;border-left:3px solid var(--a);background:var(--ad);border-radius:0 5px 5px 0;font-size:.73rem;line-height:1.7;margin-top:9px}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tc3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.tc,.tc3{grid-template-columns:1fr}}
+.kpi{text-align:center;padding:9px;background:var(--s2);border-radius:var(--r)}
+.kv{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700}.kl{font-size:.63rem;color:var(--tm);margin-top:2px}
+.br{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.bl{width:68px;font-size:.66rem;text-align:right;color:var(--tm);flex-shrink:0}
+.bt{flex:1;height:16px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;font-size:.58rem;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace;transition:width .5s}
+.footer{text-align:center;padding:16px 0;font-size:.62rem;color:var(--tm);border-top:1px solid var(--bd);margin-top:24px;line-height:1.8}
+.hidden{display:none!important}
+.zone-badge{padding:3px 10px;border-radius:4px;font-size:.7rem;font-weight:700;display:inline-block;margin:4px 2px}
+.zone-pub{background:rgba(34,197,94,.15);color:var(--g);border:1px solid rgba(34,197,94,.3)}
+.zone-surv{background:rgba(56,189,248,.15);color:var(--sky);border:1px solid rgba(56,189,248,.3)}
+.zone-ctrl{background:rgba(245,158,11,.15);color:var(--a);border:1px solid rgba(245,158,11,.3)}
+.zone-inter{background:rgba(239,68,68,.15);color:var(--d);border:1px solid rgba(239,68,68,.3)}
+@media print{body{background:#fff!important;color:#000!important}.tabs,.disc,.actions,.btn,.footer{display:none!important}.panel{display:block!important}.card{border:1px solid #ccc;break-inside:avoid;background:#fff!important}@page{margin:12mm;size:A4}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>⚡ IrradPrev</h1>
+  <div class="sub">Exposition Externe — Débit de dose • Écrans • Temps de séjour • Zonage</div>
+  <div class="badge">RadioPrev Pro 2/5 • γ + X + β + n • 15 sources γ + 16 configs X • CIPR 103/116</div>
+</header>
+<div class="disc">⚠️ <b>Outil d'aide au calcul.</b> Modèles simplifiés (source ponctuelle, atténuation mono-exponentielle). Ne remplace pas un calcul de radioprotection validé (MicroShield, MCNP).</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="sT('gamma',this)">☢️ Gamma</button>
+  <button class="tab" onclick="sT('xray',this)">📡 Rayons X</button>
+  <button class="tab" onclick="sT('shield',this)">🛡️ Écrans</button>
+  <button class="tab" onclick="sT('stay',this)">⏱️ Séjour</button>
+  <button class="tab" onclick="sT('beta',this)">β Peau</button>
+  <button class="tab" onclick="sT('neutron',this)">🔵 Neutrons</button>
+  <button class="tab" onclick="sT('zone',this)">🏗️ Zonage</button>
+  <button class="tab" onclick="sT('ref',this)">📚 Réf.</button>
+</div>
+
+<!-- ═══ GAMMA ═══ -->
+<div id="tab-gamma" class="panel active">
+  <div class="card"><h2>☢️ Débit de dose γ — Source ponctuelle</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Ḣ = Γ × A / d² — Constante spécifique × Activité / Distance²</p>
+    <div class="fg">
+      <div class="fm"><label>Source (radionucléide)</label><select id="gsrc" onchange="fillGamma()"></select></div>
+      <div class="fm"><label>Activité</label>
+        <div style="display:flex;gap:4px"><input type="number" id="gact" value="1" min="0" step="0.1" style="flex:1"><select id="gunit" style="width:80px"><option value="1e9">GBq</option><option value="1e6">MBq</option><option value="1e3">kBq</option><option value="3.7e10">Ci</option><option value="3.7e7">mCi</option></select></div>
+      </div>
+      <div class="fm"><label>Distance (m)</label><input type="number" id="gdist" value="1" min="0.01" step="0.1"></div>
+      <div class="fm"><label>Constante Γ (μSv·m²/h·GBq)</label><input type="number" id="ggamma" step="0.1" readonly style="color:var(--a)"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcGamma()">Calculer débit</button><button class="btn bs" onclick="window.print()">🖨️</button></div>
+  </div>
+  <div id="gr" class="hidden"><div class="card"><h2>📊 Résultat</h2><div id="grc"></div></div></div>
+</div>
+
+<!-- ═══ RAYONS X ═══ -->
+<div id="tab-xray" class="panel">
+  <div class="card"><h2>📡 Générateurs de rayons X — Débit de dose</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Ḣ = Rendement × I × (1/d²). Le rendement dépend de la tension (kV) et de la filtration.</p>
+    <div class="fg">
+      <div class="fm"><label>Application</label>
+        <select id="xapp" onchange="fillXray()">
+          <option value="">— Sélectionner —</option>
+          <optgroup label="Médical">
+            <option value="dent_intra">Dentaire intra-oral (60-70 kV)</option>
+            <option value="dent_pano">Dentaire panoramique (70-80 kV)</option>
+            <option value="dent_cbct">Dentaire CBCT / Cone Beam (80-90 kV)</option>
+            <option value="radio_thorax">Radio thorax (120-150 kV)</option>
+            <option value="radio_os">Radio osseuse / membres (50-70 kV)</option>
+            <option value="mammo">Mammographie (25-35 kV)</option>
+            <option value="scanner">Scanner / TDM (120-140 kV)</option>
+            <option value="fluoro">Radioscopie / Fluoroscopie (80-120 kV)</option>
+            <option value="interv">Radiologie interventionnelle (70-120 kV)</option>
+          </optgroup>
+          <optgroup label="Industriel">
+            <option value="cnd_150">CND industriel 150 kV</option>
+            <option value="cnd_300">CND industriel 300 kV</option>
+            <option value="cnd_450">CND industriel 450 kV</option>
+            <option value="xrf">Fluorescence X / XRF (40-60 kV)</option>
+            <option value="secu">Scanner de sécurité bagages (140-160 kV)</option>
+          </optgroup>
+          <optgroup label="Vétérinaire / Recherche">
+            <option value="veto">Vétérinaire (50-100 kV)</option>
+            <option value="cristallo">Cristallographie (30-50 kV)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fm"><label>Tension tube (kV)</label><input type="number" id="xkv" value="100" min="20" max="500" step="5"></div>
+      <div class="fm"><label>Courant (mA)</label><input type="number" id="xma" value="200" min="0.1" step="10"></div>
+      <div class="fm"><label>Distance opérateur (m)</label><input type="number" id="xdist" value="2" min="0.1" step="0.1"></div>
+      <div class="fm"><label>Temps de tir (s)</label><input type="number" id="xtime" value="0.1" min="0.001" step="0.01"></div>
+      <div class="fm"><label>Position</label>
+        <select id="xpos">
+          <option value="primary">Dans le faisceau primaire ⚠️</option>
+          <option value="scatter" selected>Rayonnement diffusé (opérateur)</option>
+          <option value="leakage">Fuite du tube (derrière gaine)</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcXray()">Calculer</button></div>
+  </div>
+
+  <div class="card"><h2>🛡️ Écrantage rayons X</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">CDA dépend de la tension kV (contrairement au γ où c'est fixe par source).</p>
+    <div class="fg">
+      <div class="fm"><label>Tension (kV)</label><input type="number" id="xskv" value="100" min="20" max="500" step="5"></div>
+      <div class="fm"><label>Matériau</label><select id="xsmat"><option value="Pb">Plomb</option><option value="Beton">Béton</option><option value="Ba">Plâtre baryté</option><option value="Verre">Verre plombé</option></select></div>
+      <div class="fm"><label>Débit sans écran (μSv/h)</label><input type="number" id="xsh0" value="50" min="0" step="1"></div>
+      <div class="fm"><label>Épaisseur (mm)</label><input type="number" id="xsx" value="1" min="0" step="0.1"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcXshield()">Calculer atténuation</button></div>
+  </div>
+
+  <div class="card"><h2>📋 Doses typiques — Examens médicaux</h2>
+    <table>
+      <thead><tr><th>Examen</th><th>Dose patient (mSv)</th><th>Dose diffusé 1m (μSv/exam)</th><th>NRD France</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:inherit">Radio thorax face</td><td>0.02</td><td>0.5-2</td><td>0.3 mGy·cm</td></tr>
+        <tr><td style="font-family:inherit">Radio bassin</td><td>0.7</td><td>5-15</td><td>10 mGy</td></tr>
+        <tr><td style="font-family:inherit">Mammographie</td><td>0.4</td><td>0.1-0.5</td><td>2.5 mGy/incidence</td></tr>
+        <tr><td style="font-family:inherit">Scanner thorax</td><td>7</td><td>10-30</td><td>400 mGy·cm</td></tr>
+        <tr><td style="font-family:inherit">Scanner abdo-pelvien</td><td>10</td><td>15-50</td><td>700 mGy·cm</td></tr>
+        <tr><td style="font-family:inherit">Scanner cérébral</td><td>2</td><td>5-15</td><td>1000 mGy·cm</td></tr>
+        <tr><td style="font-family:inherit">Panoramique dentaire</td><td>0.01</td><td>0.1-0.3</td><td>—</td></tr>
+        <tr><td style="font-family:inherit">CBCT dentaire</td><td>0.05-0.5</td><td>0.5-3</td><td>—</td></tr>
+        <tr><td style="font-family:inherit">Coronarographie</td><td>5-15</td><td>50-200</td><td>45 Gy·cm²</td></tr>
+        <tr><td style="font-family:inherit">Radioscopie 1 min</td><td>2-10</td><td>20-100</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="ib" style="margin-top:8px"><b>NRD :</b> Niveaux de Référence Diagnostiques (arrêté du 23/05/2019). Valeurs à ne pas dépasser en routine — pas des limites réglementaires mais des outils d'optimisation.</div>
+  </div>
+
+  <div class="card"><h2>🧑‍⚕️ Risques spécifiques par poste</h2>
+    <div class="ib">
+      <b>Radiologie interventionnelle / bloc opératoire :</b><br>
+      • Dose mains opérateur : 0.1-1 mSv/procédure → risque cristallin + extrémités<br>
+      • Porter : tablier plombé (0.35-0.5 mm Pb), lunettes plombées, cache-thyroïde, gants plombés<br>
+      • Dosimétrie double : sous et sur le tablier<br><br>
+      <b>Dentaire :</b><br>
+      • Risque faible si opérateur à &gt;2m ou derrière paravent<br>
+      • CBCT : dose patient ×10-50 vs panoramique → justification renforcée<br><br>
+      <b>CND industriel :</b><br>
+      • Gammagraphie + générateurs X haute tension (150-450 kV)<br>
+      • Périmètre de sécurité obligatoire, balisage, signal lumineux<br>
+      • PCR obligatoire sur chantier
+    </div>
+  </div>
+
+  <div id="xr" class="hidden"><div class="card"><h2>📊 Résultat rayons X</h2><div id="xrc"></div></div></div>
+</div>
+
+<!-- ═══ ÉCRANS ═══ -->
+<div id="tab-shield" class="panel">
+  <div class="card"><h2>🛡️ Dimensionnement d'écran</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Atténuation : Ḣ = Ḣ₀ × 2<sup>−x/CDA</sup>. Calcule l'épaisseur nécessaire ou le débit résiduel.</p>
+    <div class="fg">
+      <div class="fm"><label>Source</label><select id="ssrc" onchange="fillShield()"></select></div>
+      <div class="fm"><label>Matériau d'écran</label><select id="smat" onchange="fillShield()"><option value="Pb">Plomb (Pb)</option><option value="Fe">Acier (Fe)</option><option value="Beton">Béton</option><option value="H2O">Eau</option><option value="Verre">Verre plombé</option></select></div>
+      <div class="fm"><label>Mode de calcul</label><select id="smode" onchange="toggleShield()"><option value="thick">Épaisseur → débit résiduel</option><option value="target">Débit cible → épaisseur requise</option></select></div>
+      <div class="fm"><label>CDA (mm) — Couche de Demi-Atténuation</label><input type="number" id="scda" step="0.1" readonly style="color:var(--a)"></div>
+      <div class="fm"><label>Débit initial sans écran (μSv/h)</label><input type="number" id="sh0" value="100" min="0"></div>
+      <div class="fm" id="sthick-g"><label>Épaisseur écran (mm)</label><input type="number" id="sthick" value="50" min="0"></div>
+      <div class="fm hidden" id="starget-g"><label>Débit cible (μSv/h)</label><input type="number" id="starget" value="7.5" min="0" step="0.1"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcShield()">Calculer</button></div>
+  </div>
+  <div id="shr" class="hidden"><div class="card"><h2>📊 Résultat écran</h2><div id="shrc"></div></div></div>
+</div>
+
+<!-- ═══ TEMPS DE SÉJOUR ═══ -->
+<div id="tab-stay" class="panel">
+  <div class="card"><h2>⏱️ Temps de séjour autorisé</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">t<sub>max</sub> = D<sub>limite</sub> / Ḣ — Durée maximale avant atteinte d'une contrainte de dose.</p>
+    <div class="fg">
+      <div class="fm"><label>Débit de dose au poste (μSv/h)</label><input type="number" id="stdose" value="25" min="0" step="0.1"></div>
+      <div class="fm"><label>Contrainte de dose</label>
+        <select id="stlimit">
+          <option value="20000">20 mSv/an (limite travailleur)</option>
+          <option value="6000">6 mSv/an (seuil info PCR)</option>
+          <option value="1000">1 mSv/an (public)</option>
+          <option value="500">500 μSv (intervention ponctuelle)</option>
+          <option value="100" selected>100 μSv (mission courte)</option>
+          <option value="20">20 μSv (dose horaire zonage)</option>
+          <option value="0">Personnalisé</option>
+        </select>
+      </div>
+      <div class="fm hidden" id="stcustom-g"><label>Dose limite personnalisée (μSv)</label><input type="number" id="stcustom" value="250" min="0"></div>
+      <div class="fm"><label>Nombre d'intervenants</label><input type="number" id="stworkers" value="1" min="1" max="20"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcStay()">Calculer</button></div>
+  </div>
+  <div id="str" class="hidden"><div class="card"><h2>📊 Temps autorisé</h2><div id="strc"></div></div></div>
+</div>
+
+<!-- ═══ BETA PEAU ═══ -->
+<div id="tab-beta" class="panel">
+  <div class="card"><h2>β Dose peau — Exposition β</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Estimation de la dose équivalente peau Hp(0.07) pour une exposition β. Limite annuelle : 500 mSv/an.</p>
+    <div class="fg">
+      <div class="fm"><label>Source β</label>
+        <select id="bsrc">
+          <option value="Sr90">Sr-90/Y-90 (Emax 2.28 MeV)</option>
+          <option value="P32">P-32 (Emax 1.71 MeV)</option>
+          <option value="C14">C-14 (Emax 0.156 MeV)</option>
+          <option value="S35">S-35 (Emax 0.167 MeV)</option>
+          <option value="H3">H-3 (Emax 0.0186 MeV)</option>
+          <option value="Cs137">Cs-137/Ba-137m (Emax 1.17 MeV)</option>
+          <option value="Co60">Co-60 (Emax 0.318 MeV)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Activité surfacique (Bq/cm²)</label><input type="number" id="bact" value="1000" min="0"></div>
+      <div class="fm"><label>Surface exposée (cm²)</label><input type="number" id="bsurf" value="100" min="1"></div>
+      <div class="fm"><label>Durée (minutes)</label><input type="number" id="bdur" value="60" min="1"></div>
+      <div class="fm"><label>EPI (gants)</label><select id="bepi"><option value="1">Sans gants</option><option value="0.3">Gants latex (0.1 mm)</option><option value="0.05">Gants vinyle épais (0.3 mm)</option><option value="0.01">Gants plombés</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcBeta()">Calculer dose peau</button></div>
+  </div>
+  <div id="betar" class="hidden"><div class="card"><h2>📊 Dose peau</h2><div id="betarc"></div></div></div>
+</div>
+
+<!-- ═══ NEUTRONS ═══ -->
+<div id="tab-neutron" class="panel">
+  <div class="card"><h2>🔵 Exposition neutronique</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Estimation du débit d'équivalent de dose ambiant H*(10) pour une source de neutrons. Le facteur de qualité wR varie de 2,5 à 20 selon l'énergie.</p>
+    <div class="fg">
+      <div class="fm"><label>Type de source</label>
+        <select id="nsrc" onchange="fillNeutron()">
+          <option value="Cf252">Cf-252 (fission spontanée)</option>
+          <option value="AmBe">Am-241/Be (α,n)</option>
+          <option value="PuBe">Pu-238/Be (α,n)</option>
+          <option value="reactor">Réacteur nucléaire (spectre mixte)</option>
+          <option value="crit">Accident de criticité</option>
+        </select>
+      </div>
+      <div class="fm"><label>Débit d'émission (n/s)</label><input type="number" id="nemis" value="1e7" min="0" step="1e6"></div>
+      <div class="fm"><label>Distance (m)</label><input type="number" id="ndist" value="1" min="0.1" step="0.1"></div>
+      <div class="fm"><label>Énergie moyenne (MeV)</label><input type="number" id="nen" value="2.1" min="0.001" step="0.1" readonly style="color:var(--a)"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcNeutron()">Calculer</button></div>
+  </div>
+  <div id="nr" class="hidden"><div class="card"><h2>📊 Débit neutronique</h2><div id="nrc"></div></div></div>
+</div>
+
+<!-- ═══ ZONAGE ═══ -->
+<div id="tab-zone" class="panel">
+  <div class="card">
+    <h2>🏗️ Zonage radiologique — Arrêté du 15/05/2006 modifié 2018</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Entrez un débit de dose ou une dose intégrée pour déterminer la zone réglementaire.</p>
+    <div class="fg">
+      <div class="fm"><label>Mode</label><select id="zmode" onchange="toggleZone()"><option value="rate">Débit de dose (μSv/h)</option><option value="dose">Dose intégrée (mSv/mois)</option></select></div>
+      <div class="fm" id="zrate-g"><label>Débit (μSv/h)</label><input type="number" id="zrate" value="10" min="0" step="0.1"></div>
+      <div class="fm hidden" id="zdose-g"><label>Dose (mSv/mois)</label><input type="number" id="zdose" value="2" min="0" step="0.1"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcZone()">Déterminer zone</button></div>
+  </div>
+  <div id="zr" class="hidden"><div class="card"><h2>📋 Résultat zonage</h2><div id="zrc"></div></div></div>
+  <div class="card">
+    <h2>📊 Tableau de zonage complet</h2>
+    <table>
+      <thead><tr><th>Zone</th><th>Couleur</th><th>Débit dose</th><th>Dose/mois</th><th>Dose/an</th><th>Accès</th></tr></thead>
+      <tbody>
+        <tr><td>Non réglementée</td><td><span class="zone-pub">PUBLIC</span></td><td>&lt; 0,5 μSv/h</td><td>&lt; 0,08 mSv</td><td>&lt; 1 mSv</td><td style="font-family:inherit">Libre</td></tr>
+        <tr><td>Surveillée</td><td><span class="zone-surv">BLEUE</span></td><td>0,5 — 7,5 μSv/h</td><td>0,08 — 1,25 mSv</td><td>1 — 6 mSv</td><td style="font-family:inherit">Cat. B autorisée</td></tr>
+        <tr><td>Contrôlée verte</td><td><span class="zone-ctrl" style="background:rgba(34,197,94,.15);color:var(--g);border-color:rgba(34,197,94,.3)">VERTE</span></td><td>7,5 — 25 μSv/h</td><td>1,25 — 4 mSv</td><td>6 — 20 mSv</td><td style="font-family:inherit">Cat. A ou B</td></tr>
+        <tr><td>Contrôlée jaune</td><td><span class="zone-ctrl">JAUNE</span></td><td>25 — 2 000 μSv/h</td><td>4 — 333 mSv</td><td>—</td><td style="font-family:inherit">Cat. A — dosimétrie opérat.</td></tr>
+        <tr><td>Contrôlée orange</td><td><span class="zone-ctrl" style="background:rgba(239,68,68,.1);color:#f97316;border-color:rgba(249,115,22,.3)">ORANGE</span></td><td>2 — 100 mSv/h</td><td>—</td><td>—</td><td style="font-family:inherit">Autorisation spéciale</td></tr>
+        <tr><td>Interdite rouge</td><td><span class="zone-inter">ROUGE</span></td><td>&gt; 100 mSv/h</td><td>—</td><td>—</td><td style="font-family:inherit">Interdite sauf urgence</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ REFERENCES ═══ -->
+<div id="tab-ref" class="panel">
+  <div class="card"><h2>📚 Constantes Γ — Débit de dose γ</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Constante spécifique de débit de dose à 1 m pour 1 GBq (source ponctuelle non écrantée).</p>
+    <table><thead><tr><th>Source</th><th>Γ (μSv·m²/h·GBq)</th><th>Énergie γ princ.</th><th>Usage typique</th></tr></thead>
+    <tbody id="reftb"></tbody></table>
+  </div>
+  <div class="card"><h2>🛡️ CDA par matériau (mm)</h2>
+    <table><thead><tr><th>Source</th><th>Plomb</th><th>Acier</th><th>Béton</th><th>Eau</th></tr></thead>
+    <tbody id="cdatb"></tbody></table>
+  </div>
+  <div class="card"><h2>⚖️ Références réglementaires</h2>
+    <div class="ib">
+      Arrêté du 15 mai 2006 modifié (zonage)<br>
+      Code du travail R.4451-1 à R.4451-144<br>
+      CIPR 103 (2007) — wR, wT<br>
+      CIPR 116 (2010) — Conversion coefficients<br>
+      NF M 60-002 — Dosimétrie externe<br>
+      Guide ASN n°20 — Gestion situations incidentelles
+    </div>
+  </div>
+</div>
+
+<footer class="footer">IrradPrev v1.1 — γ + Rayons X + β + Neutrons<br>Module RadioPrev Pro 2/5 • PréventIA-LaB © 2026</footer>
+</div>
+
+<script>
+// ═══ GAMMA SOURCES DATABASE ═══
+const SRC={
+"Co-60":{g:351,e:"1.17 + 1.33 MeV",use:"Gammagraphie, stérilisation, radiothérapie",cda:{Pb:12,Fe:21,Beton:60,H2O:110,Verre:14}},
+"Cs-137":{g:87,e:"0.662 MeV",use:"Jauges industrielles, gammagraphie, sources scellées",cda:{Pb:6.5,Fe:16,Beton:49,H2O:88,Verre:7.5}},
+"Ir-192":{g:130,e:"0.317 (moy.)",use:"Gammagraphie industrielle (CND)",cda:{Pb:4.8,Fe:13,Beton:43,H2O:73,Verre:5.5}},
+"Ra-226":{g:220,e:"0.186 — 2.2 MeV",use:"Sources historiques, paratonnerres",cda:{Pb:8,Fe:18,Beton:55,H2O:95,Verre:10}},
+"Am-241":{g:3.1,e:"0.060 MeV",use:"Détecteurs de fumée, jauges",cda:{Pb:0.08,Fe:1,Beton:12,H2O:20,Verre:0.1}},
+"Na-22":{g:320,e:"0.511 + 1.275 MeV",use:"Recherche, TEP calibration",cda:{Pb:8,Fe:17,Beton:52,H2O:90,Verre:9}},
+"Mn-54":{g:122,e:"0.835 MeV",use:"Activation des aciers",cda:{Pb:7.5,Fe:17,Beton:51,H2O:91,Verre:8.5}},
+"I-131":{g:59,e:"0.364 MeV",use:"Médecine nucléaire thyroïde",cda:{Pb:3,Fe:10,Beton:36,H2O:60,Verre:3.5}},
+"Tc-99m":{g:17,e:"0.141 MeV",use:"Scintigraphie (traceur le + utilisé)",cda:{Pb:0.3,Fe:3,Beton:18,H2O:30,Verre:0.4}},
+"F-18":{g:154,e:"0.511 MeV (ann.)",use:"TEP-FDG",cda:{Pb:4,Fe:11,Beton:40,H2O:68,Verre:4.5}},
+"Ba-133":{g:52,e:"0.356 MeV",use:"Étalonnage, sources de contrôle",cda:{Pb:2.5,Fe:9,Beton:33,H2O:56,Verre:3}},
+"Eu-152":{g:170,e:"0.122 — 1.41 MeV",use:"Étalonnage, activation",cda:{Pb:7,Fe:16,Beton:50,H2O:87,Verre:8}},
+"Se-75":{g:56,e:"0.136 — 0.401 MeV",use:"Gammagraphie (remplacement Ir-192)",cda:{Pb:1.5,Fe:7,Beton:28,H2O:48,Verre:2}},
+"Ta-182":{g:183,e:"1.12 — 1.22 MeV",use:"Gammagraphie",cda:{Pb:10,Fe:19,Beton:56,H2O:98,Verre:12}},
+"Lu-177":{g:5.6,e:"0.208 MeV",use:"Thérapie ciblée (PRRT)",cda:{Pb:0.5,Fe:3,Beton:15,H2O:25,Verre:0.6}},
+};
+
+// ═══ BETA SOURCES ═══
+const BETA={
+Sr90:{emax:2.28,eav:0.93,range_air:920,dose_factor:1.7e-3},
+P32:{emax:1.71,eav:0.69,range_air:650,dose_factor:1.3e-3},
+C14:{emax:0.156,eav:0.049,range_air:24,dose_factor:6e-5},
+S35:{emax:0.167,eav:0.049,range_air:26,dose_factor:6e-5},
+H3:{emax:0.0186,eav:0.006,range_air:0.6,dose_factor:0},
+Cs137:{emax:1.17,eav:0.19,range_air:400,dose_factor:8e-4},
+Co60:{emax:0.318,eav:0.097,range_air:80,dose_factor:2e-4},
+};
+
+// ═══ NEUTRON SOURCES ═══
+const NEUT={
+Cf252:{en:2.1,conv:3.5e-4,desc:"Fission spontanée — spectre de Watt"},
+AmBe:{en:4.5,conv:3.9e-4,desc:"Réaction (α,n) — spectre 0-11 MeV"},
+PuBe:{en:4.2,conv:3.8e-4,desc:"Réaction (α,n) — similaire Am/Be"},
+reactor:{en:1.0,conv:3.2e-4,desc:"Spectre mixte thermique+rapide"},
+crit:{en:1.5,conv:3.4e-4,desc:"Spectre de criticité — urgence"},
+};
+
+// ═══ INIT ═══
+function init(){
+  const opts=Object.entries(SRC).map(([k,v])=>`<option value="${k}">${k} (Γ=${v.g})</option>`).join('');
+  document.getElementById('gsrc').innerHTML='<option value="">— Source —</option>'+opts;
+  document.getElementById('ssrc').innerHTML='<option value="">— Source —</option>'+opts;
+  buildRefTables();
+}
+
+function buildRefTables(){
+  document.getElementById('reftb').innerHTML=Object.entries(SRC).map(([k,v])=>`<tr><td style="font-weight:600;color:var(--a)">${k}</td><td style="color:var(--a)">${v.g}</td><td>${v.e}</td><td style="font-family:inherit;font-size:.68rem">${v.use}</td></tr>`).join('');
+  document.getElementById('cdatb').innerHTML=Object.entries(SRC).map(([k,v])=>`<tr><td style="font-weight:600;color:var(--a)">${k}</td><td>${v.cda.Pb}</td><td>${v.cda.Fe}</td><td>${v.cda.Beton}</td><td>${v.cda.H2O}</td></tr>`).join('');
+}
+
+// ═══ TABS ═══
+function sT(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(btn)btn.classList.add('active')}
+
+// ═══ HELPERS ═══
+function tr(l,v){return`<tr><td style="width:48%">${l}</td><td>${v}</td></tr>`}
+function fmtTime(min){if(min<1)return(min*60).toFixed(0)+' s';if(min<60)return min.toFixed(1)+' min';if(min<1440)return(min/60).toFixed(1)+' h';return(min/1440).toFixed(1)+' j'}
+function zoneInfo(rate){
+  if(rate<0.5)return{z:'Non réglementée',cls:'zone-pub',c:'var(--g)'};
+  if(rate<7.5)return{z:'Zone surveillée (bleue)',cls:'zone-surv',c:'var(--sky)'};
+  if(rate<25)return{z:'Zone contrôlée verte',cls:'zone-ctrl',c:'var(--g)'};
+  if(rate<2000)return{z:'Zone contrôlée jaune',cls:'zone-ctrl',c:'var(--a)'};
+  if(rate<100000)return{z:'Zone contrôlée orange',cls:'zone-ctrl',c:'#f97316'};
+  return{z:'Zone interdite rouge',cls:'zone-inter',c:'var(--d)'};
+}
+
+// ═══ GAMMA CALC ═══
+function fillGamma(){const k=document.getElementById('gsrc').value;if(k&&SRC[k])document.getElementById('ggamma').value=SRC[k].g}
+function calcGamma(){
+  const k=document.getElementById('gsrc').value;if(!k)return;
+  const s=SRC[k],gv=s.g;
+  const actBq=parseFloat(document.getElementById('gact').value)*parseFloat(document.getElementById('gunit').value);
+  const actGBq=actBq/1e9;
+  const d=parseFloat(document.getElementById('gdist').value);if(!d)return;
+  const rate=gv*actGBq/(d*d); // μSv/h
+  const zi=zoneInfo(rate);
+  const fmtR=rate>=1000?(rate/1000).toFixed(2)+' mSv/h':rate.toFixed(2)+' μSv/h';
+
+  document.getElementById('gr').classList.remove('hidden');
+  document.getElementById('grc').innerHTML=`
+    <div class="dv" style="color:${zi.c}">${fmtR}</div>
+    <div style="text-align:center"><span class="${zi.cls}" style="font-size:.75rem;padding:4px 12px">${zi.z}</span></div>
+    <div class="tc3" style="margin-top:12px">
+      <div class="kpi"><div class="kv" style="color:var(--a)">${gv}</div><div class="kl">Γ (μSv·m²/h·GBq)</div></div>
+      <div class="kpi"><div class="kv">${actGBq.toFixed(3)}</div><div class="kl">Activité (GBq)</div></div>
+      <div class="kpi"><div class="kv">${d}</div><div class="kl">Distance (m)</div></div>
+    </div>
+    <table style="margin-top:12px">
+      ${tr('Formule','Ḣ = Γ × A / d² = '+gv+' × '+actGBq.toFixed(3)+' / '+d+'² = <b>'+fmtR+'</b>')}
+      ${tr('À 0,5 m',(gv*actGBq/(.5*.5)).toFixed(1)+' μSv/h')}
+      ${tr('À 2 m',(gv*actGBq/4).toFixed(2)+' μSv/h')}
+      ${tr('À 5 m',(gv*actGBq/25).toFixed(3)+' μSv/h')}
+      ${tr('Temps pour 100 μSv',(100/rate*60).toFixed(1)+' min')}
+      ${tr('Temps pour 20 mSv',(20000/rate).toFixed(1)+' h')}
+    </table>
+    <div class="ib" style="margin-top:10px"><b>Rappel :</b> La règle du carré inverse : doubler la distance divise le débit par 4. Premier réflexe en radioprotection = distance.</div>`;
+  document.getElementById('gr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ SHIELD CALC ═══
+function fillShield(){
+  const k=document.getElementById('ssrc').value,m=document.getElementById('smat').value;
+  if(k&&SRC[k]&&SRC[k].cda[m])document.getElementById('scda').value=SRC[k].cda[m];
+}
+function toggleShield(){
+  const mode=document.getElementById('smode').value;
+  document.getElementById('sthick-g').classList.toggle('hidden',mode==='target');
+  document.getElementById('starget-g').classList.toggle('hidden',mode==='thick');
+}
+function calcShield(){
+  const cda=parseFloat(document.getElementById('scda').value);
+  const h0=parseFloat(document.getElementById('sh0').value);
+  const mode=document.getElementById('smode').value;
+  const mat=document.getElementById('smat').value;
+  const src=document.getElementById('ssrc').value;
+  if(!cda||!h0)return;
+  const matNames={Pb:'Plomb',Fe:'Acier',Beton:'Béton',H2O:'Eau',Verre:'Verre plombé'};
+  let html;
+
+  if(mode==='thick'){
+    const x=parseFloat(document.getElementById('sthick').value);if(!x&&x!==0)return;
+    const hf=h0*Math.pow(2,-x/cda);
+    const att=(1-hf/h0)*100;
+    const nCDA=(x/cda);
+    const zi=zoneInfo(hf);
+    const fmtH=hf>=1000?(hf/1000).toFixed(2)+' mSv/h':hf.toFixed(3)+' μSv/h';
+    html=`<div class="dv" style="color:${zi.c}">${fmtH}</div>
+      <div style="text-align:center"><span class="${zi.cls}" style="padding:4px 12px">${zi.z}</span></div>
+      <div class="tc3" style="margin-top:12px">
+        <div class="kpi"><div class="kv" style="color:var(--g)">${att.toFixed(1)}%</div><div class="kl">Atténuation</div></div>
+        <div class="kpi"><div class="kv">${nCDA.toFixed(1)}</div><div class="kl">Nb de CDA</div></div>
+        <div class="kpi"><div class="kv">${x} mm</div><div class="kl">${matNames[mat]}</div></div>
+      </div>
+      <table style="margin-top:10px">
+        ${tr('Source',src||'—')}${tr('Débit initial',h0+' μSv/h')}
+        ${tr('CDA',cda+' mm de '+matNames[mat])}
+        ${tr('Épaisseur',x+' mm')}
+        ${tr('Formule','Ḣ = '+h0+' × 2^(−'+x+'/'+cda+') = <b>'+fmtH+'</b>')}
+      </table>`;
+  } else {
+    const target=parseFloat(document.getElementById('starget').value);if(!target)return;
+    const x=cda*Math.log2(h0/target);
+    const nCDA=x/cda;
+    html=`<div class="dv" style="color:var(--a)">${x.toFixed(1)} <span class="du">mm de ${matNames[mat]}</span></div>
+      <div class="tc3" style="margin-top:12px">
+        <div class="kpi"><div class="kv">${nCDA.toFixed(1)}</div><div class="kl">Nb de CDA</div></div>
+        <div class="kpi"><div class="kv">${h0}</div><div class="kl">Débit initial (μSv/h)</div></div>
+        <div class="kpi"><div class="kv">${target}</div><div class="kl">Débit cible (μSv/h)</div></div>
+      </div>
+      <table style="margin-top:10px">
+        ${tr('Source',src||'—')}${tr('CDA',cda+' mm')}
+        ${tr('Formule','x = CDA × log₂(Ḣ₀/Ḣ) = '+cda+' × log₂('+h0+'/'+target+') = <b>'+x.toFixed(1)+' mm</b>')}
+        ${tr('Arrondi sécurité',Math.ceil(x/5)*5+' mm (multiple de 5)')}
+      </table>
+      <div class="ib" style="margin-top:8px">💡 En pratique, arrondir au-dessus à un multiple de 5 mm pour le plomb, 50 mm pour le béton.</div>`;
+  }
+  document.getElementById('shr').classList.remove('hidden');
+  document.getElementById('shrc').innerHTML=html;
+  document.getElementById('shr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ STAY TIME ═══
+function calcStay(){
+  const rate=parseFloat(document.getElementById('stdose').value);
+  const limSel=document.getElementById('stlimit').value;
+  const workers=parseInt(document.getElementById('stworkers').value)||1;
+  let lim=parseFloat(limSel);
+  if(limSel==='0')lim=parseFloat(document.getElementById('stcustom').value);
+  if(!rate||!lim)return;
+  document.getElementById('stcustom-g').classList.toggle('hidden',limSel!=='0');
+
+  const tMin=(lim/rate)*60; // minutes
+  const tPerWorker=tMin*workers;
+  const zi=zoneInfo(rate);
+
+  document.getElementById('str').classList.remove('hidden');
+  document.getElementById('strc').innerHTML=`
+    <div class="dv" style="color:${zi.c}">${fmtTime(tMin)}</div>
+    <div style="text-align:center;font-size:.73rem;color:var(--tm)">par intervenant</div>
+    <div style="text-align:center;margin-top:6px"><span class="${zi.cls}" style="padding:3px 10px">${zi.z}</span></div>
+    ${workers>1?`<div class="kpi" style="margin-top:10px"><div class="kv" style="color:var(--tl)">${fmtTime(tPerWorker)}</div><div class="kl">Temps total avec relève (${workers} intervenants)</div></div>`:''}
+    <table style="margin-top:10px">
+      ${tr('Débit au poste',rate+' μSv/h')}
+      ${tr('Contrainte',lim+' μSv')}
+      ${tr('Formule','t = '+lim+' / '+rate+' = '+fmtTime(tMin))}
+      ${workers>1?tr('Avec '+workers+' intervenants',fmtTime(tPerWorker)+' total'):''}
+      ${tr('Dose en 1h',rate+' μSv')}
+      ${tr('Dose en 8h',(rate*8).toFixed(0)+' μSv')}
+    </table>
+    <div class="ib" style="margin-top:8px"><b>Optimisation ALARA :</b> Planifier l'intervention, répéter les gestes sur maquette, préparer l'outillage. Chaque minute gagnée = dose évitée.</div>`;
+  document.getElementById('str').scrollIntoView({behavior:'smooth'});
+}
+document.getElementById('stlimit').addEventListener('change',()=>document.getElementById('stcustom-g').classList.toggle('hidden',document.getElementById('stlimit').value!=='0'));
+
+// ═══ BETA SKIN ═══
+function calcBeta(){
+  const bk=document.getElementById('bsrc').value;
+  const b=BETA[bk];if(!b)return;
+  const act=parseFloat(document.getElementById('bact').value);
+  const surf=parseFloat(document.getElementById('bsurf').value);
+  const dur=parseFloat(document.getElementById('bdur').value);
+  const epi=parseFloat(document.getElementById('bepi').value);
+  // Simplified skin dose: Hp(0.07) ≈ dose_factor × activity × surface × time × EPI
+  // dose_factor in mSv/(Bq·cm²·h) approximately
+  const doseRate=b.dose_factor*act*epi; // mSv/h per cm²
+  const totalDose=doseRate*surf*(dur/60); // mSv
+  const pctLimit=(totalDose/500)*100;
+  const annRate=totalDose*250; // rough: if daily for 250 days
+  const c=totalDose>50?'var(--d)':totalDose>5?'var(--a)':'var(--g)';
+
+  document.getElementById('betar').classList.remove('hidden');
+  document.getElementById('betarc').innerHTML=`
+    <div class="dv" style="color:${c}">${totalDose<1?totalDose.toFixed(3):totalDose.toFixed(1)} <span class="du">mSv</span></div>
+    <div style="text-align:center;font-size:.7rem;color:var(--tm)">${pctLimit.toFixed(2)}% de la limite peau (500 mSv/an)</div>
+    <table style="margin-top:10px">
+      ${tr('Source β',bk+' (Emax '+b.emax+' MeV)')}
+      ${tr('Portée dans l\'air',b.range_air+' mm')}
+      ${b.emax<0.07?tr('⚠️','Énergie trop faible pour traverser la couche cornée (70 μm). Dose peau réelle ≈ 0.'):''}
+      ${tr('Act. surfacique',act+' Bq/cm²')}
+      ${tr('Surface',surf+' cm²')}
+      ${tr('Durée',dur+' min')}
+      ${tr('EPI','×'+epi+' (transmission)')}
+      ${tr('Dose peau Hp(0.07)',`<b style="color:${c}">${totalDose<1?totalDose.toFixed(3):totalDose.toFixed(1)} mSv</b>`)}
+    </table>
+    ${b.emax<0.02?`<div class="ib" style="border-color:var(--g)">✅ <b>Tritium :</b> les β du H-3 (18.6 keV max) ne traversent pas la couche cornée. La dose peau externe est nulle. Le risque est uniquement par incorporation (transcutanée pour HTO).</div>`:''}
+    <div class="ib" style="margin-top:8px"><b>Dose cristallin :</b> pour les β de haute énergie (&gt;0.7 MeV), penser à la dose œil Hp(3) — limite 20 mSv/an (CIPR 118). Lunettes de protection plombées recommandées pour Sr-90, P-32.</div>`;
+  document.getElementById('betar').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ NEUTRON ═══
+function fillNeutron(){
+  const k=document.getElementById('nsrc').value;
+  if(NEUT[k]){document.getElementById('nen').value=NEUT[k].en;document.getElementById('nemis').value=k==='crit'?1e15:k==='reactor'?1e9:1e7}
+}
+function calcNeutron(){
+  const k=document.getElementById('nsrc').value;if(!NEUT[k])return;
+  const n=NEUT[k];
+  const emis=parseFloat(document.getElementById('nemis').value);
+  const d=parseFloat(document.getElementById('ndist').value);
+  // H*(10) ≈ fluence × conversion factor
+  // fluence at distance = emission / (4π d²)
+  const fluence=emis/(4*Math.PI*d*d); // n/s/cm² → convert m² to cm²
+  const fluenceCm2=emis/(4*Math.PI*d*d*1e4);
+  // conversion: μSv/h per n/cm²/s ≈ conv factor
+  const hRate=fluenceCm2*n.conv*3600*1e6; // very approximate
+  // Simpler approach: use tabulated values
+  // For Cf-252 at 1m for 10^7 n/s ≈ 2.3 μSv/h
+  const refRate=emis/1e7*2.3/(d*d); // calibrated on Cf-252
+  const scaleFactor=n.conv/3.5e-4;
+  const rate=refRate*scaleFactor;
+  const zi=zoneInfo(rate);
+  const fmtR=rate>=1000?(rate/1000).toFixed(2)+' mSv/h':rate.toFixed(2)+' μSv/h';
+
+  // wR for this energy
+  let wR;
+  if(n.en<0.01)wR=2.5;
+  else if(n.en<0.1)wR=5;
+  else if(n.en<2)wR=10;
+  else if(n.en<20)wR=15;
+  else wR=20;
+
+  document.getElementById('nr').classList.remove('hidden');
+  document.getElementById('nrc').innerHTML=`
+    <div class="dv" style="color:${zi.c}">${fmtR}</div>
+    <div style="text-align:center"><span class="${zi.cls}" style="padding:3px 10px">${zi.z}</span></div>
+    <div class="tc3" style="margin-top:12px">
+      <div class="kpi"><div class="kv" style="color:var(--sky)">${wR}</div><div class="kl">wR (facteur qualité)</div></div>
+      <div class="kpi"><div class="kv">${n.en} MeV</div><div class="kl">Énergie moyenne</div></div>
+      <div class="kpi"><div class="kv">${(emis).toExponential(1)}</div><div class="kl">Émission (n/s)</div></div>
+    </div>
+    <table style="margin-top:10px">
+      ${tr('Source',k+' — '+n.desc)}
+      ${tr('Distance',d+' m')}
+      ${tr('Débit H*(10)',`<b>${fmtR}</b>`)}
+      ${tr('wR neutrons',wR+' (énergie '+n.en+' MeV)')}
+    </table>
+    <div class="ib" style="margin-top:8px"><b>Écrantage neutrons :</b> Utiliser des matériaux hydrogénés (polyéthylène, eau, paraffine) pour thermaliser les neutrons rapides, puis du bore ou cadmium pour absorber les thermiques. Le plomb et l'acier sont peu efficaces sur les neutrons !</div>
+    ${k==='crit'?`<div class="ib" style="border-color:var(--d);margin-top:6px">🚨 <b>CRITICITÉ :</b> Évacuer immédiatement (signal sonore). Ne pas retourner sur zone. Dose corps entier + neutrons = syndrome aigu possible. Activer le PUI (Plan d'Urgence Interne).</div>`:''}`;
+  document.getElementById('nr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ ZONAGE ═══
+function toggleZone(){
+  const m=document.getElementById('zmode').value;
+  document.getElementById('zrate-g').classList.toggle('hidden',m==='dose');
+  document.getElementById('zdose-g').classList.toggle('hidden',m==='rate');
+}
+function calcZone(){
+  let rate;
+  if(document.getElementById('zmode').value==='rate'){
+    rate=parseFloat(document.getElementById('zrate').value);
+  }else{
+    const doseMo=parseFloat(document.getElementById('zdose').value);
+    rate=doseMo*1000/(30*8); // mSv/mois → μSv/h (8h/j, 30j)
+  }
+  if(!rate&&rate!==0)return;
+  const zi=zoneInfo(rate);
+  const zones=[
+    {z:'Non réglementée',min:0,max:.5,cls:'zone-pub'},
+    {z:'Surveillée (bleue)',min:.5,max:7.5,cls:'zone-surv'},
+    {z:'Contrôlée verte',min:7.5,max:25,cls:'zone-ctrl'},
+    {z:'Contrôlée jaune',min:25,max:2000,cls:'zone-ctrl'},
+    {z:'Contrôlée orange',min:2000,max:100000,cls:'zone-ctrl'},
+    {z:'Interdite rouge',min:100000,max:1e9,cls:'zone-inter'},
+  ];
+  const bars=zones.map(z=>{
+    const active=rate>=z.min&&rate<z.max;
+    return`<div class="br"><div class="bl">${z.z.split('(')[0].trim()}</div><div class="bt"><div class="bf" style="width:${active?100:15}%;background:${active?zi.c:'var(--s3)'};opacity:${active?1:.3}">${active?'◀ '+rate.toFixed(1)+' μSv/h':''}</div></div></div>`;
+  }).join('');
+
+  document.getElementById('zr').classList.remove('hidden');
+  document.getElementById('zrc').innerHTML=`
+    <div style="text-align:center;margin-bottom:10px"><span class="${zi.cls}" style="font-size:.85rem;padding:6px 16px">${zi.z}</span></div>
+    <div style="margin-top:10px">${bars}</div>
+    <table style="margin-top:10px">
+      ${tr('Débit mesuré',rate.toFixed(2)+' μSv/h')}
+      ${tr('Dose en 8h/j, 20j/mois',(rate*8*20/1000).toFixed(2)+' mSv/mois')}
+      ${tr('Dose annuelle estimée',(rate*1600/1000).toFixed(1)+' mSv/an (1600 h)')}
+    </table>
+    <div class="ib" style="margin-top:8px">
+      <b>Obligations PCR :</b> signalisation conforme, balisage, contrôles périodiques (arrêté zonage), dosimétrie adaptée, formation travailleurs exposés.
+    </div>`;
+  document.getElementById('zr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ X-RAY DATABASE ═══
+const XRAY={
+  dent_intra:{kv:65,ma:7,t:0.3,desc:"Dentaire intra-oral"},
+  dent_pano:{kv:75,ma:10,t:14,desc:"Panoramique dentaire"},
+  dent_cbct:{kv:85,ma:5,t:20,desc:"CBCT Cone Beam"},
+  radio_thorax:{kv:120,ma:200,t:0.02,desc:"Radio thorax"},
+  radio_os:{kv:60,ma:100,t:0.05,desc:"Radio osseuse"},
+  mammo:{kv:28,ma:100,t:0.5,desc:"Mammographie"},
+  scanner:{kv:120,ma:300,t:1,desc:"Scanner TDM"},
+  fluoro:{kv:100,ma:3,t:60,desc:"Radioscopie (1 min)"},
+  interv:{kv:90,ma:5,t:300,desc:"Radiologie interventionnelle (5 min)"},
+  cnd_150:{kv:150,ma:5,t:60,desc:"CND industriel 150 kV"},
+  cnd_300:{kv:300,ma:10,t:60,desc:"CND industriel 300 kV"},
+  cnd_450:{kv:450,ma:10,t:60,desc:"CND industriel 450 kV"},
+  xrf:{kv:50,ma:0.05,t:10,desc:"Fluorescence X (XRF)"},
+  secu:{kv:150,ma:5,t:1,desc:"Scanner sécurité bagages"},
+  veto:{kv:70,ma:100,t:0.05,desc:"Vétérinaire"},
+  cristallo:{kv:40,ma:20,t:3600,desc:"Cristallographie"},
+};
+
+// X-ray output: mGy/mAs at 1m (approximate, depends on filtration)
+function xOutput(kv){
+  // Empirical: output ≈ k × kV² (with k adjusted for typical filtration)
+  // Calibrated on standard values
+  if(kv<=30)return 0.005;
+  if(kv<=50)return 0.02;
+  if(kv<=70)return 0.05;
+  if(kv<=100)return 0.10;
+  if(kv<=150)return 0.22;
+  if(kv<=200)return 0.40;
+  if(kv<=300)return 0.80;
+  return 1.5;
+}
+
+// CDA for X-rays
+function xCDA(kv,mat){
+  // CDA in mm, interpolated
+  const data={
+    Pb:{30:0.02,50:0.06,70:0.15,100:0.27,150:0.30,200:0.52,300:1.5,450:2.5},
+    Beton:{30:2,50:4,70:8,100:15,150:22,200:25,300:35,450:45},
+    Ba:{30:1,50:2,70:4,100:8,150:12,200:15,300:22,450:30},
+    Verre:{30:0.03,50:0.08,70:0.2,100:0.35,150:0.4,200:0.6,300:1.8,450:3},
+  };
+  const d=data[mat]||data.Pb;
+  const keys=Object.keys(d).map(Number).sort((a,b)=>a-b);
+  // Find bracketing values and interpolate
+  if(kv<=keys[0])return d[keys[0]];
+  if(kv>=keys[keys.length-1])return d[keys[keys.length-1]];
+  for(let i=0;i<keys.length-1;i++){
+    if(kv>=keys[i]&&kv<=keys[i+1]){
+      const frac=(kv-keys[i])/(keys[i+1]-keys[i]);
+      return d[keys[i]]+(d[keys[i+1]]-d[keys[i]])*frac;
+    }
+  }
+  return d[100];
+}
+
+function fillXray(){
+  const k=document.getElementById('xapp').value;
+  if(!k||!XRAY[k])return;
+  const x=XRAY[k];
+  document.getElementById('xkv').value=x.kv;
+  document.getElementById('xma').value=x.ma;
+  document.getElementById('xtime').value=x.t;
+}
+
+function calcXray(){
+  const kv=+document.getElementById('xkv').value;
+  const ma=+document.getElementById('xma').value;
+  const dist=+document.getElementById('xdist').value;
+  const time=+document.getElementById('xtime').value;
+  const pos=document.getElementById('xpos').value;
+  if(!kv||!ma||!dist||!time)return;
+
+  const output=xOutput(kv); // mGy/mAs at 1m
+  const mAs=ma*time;
+  // Primary beam dose at 1m
+  const dosePrimary1m=output*mAs; // mGy at 1m
+  const dosePrimaryDist=dosePrimary1m/(dist*dist); // mGy at distance
+
+  // Scatter/leakage factors
+  let factor=1,posLabel='Faisceau primaire';
+  if(pos==='scatter'){factor=0.001;posLabel='Rayonnement diffusé';} // ~0.1% of primary at 1m
+  if(pos==='leakage'){factor=0.0001;posLabel='Fuite tube (derrière gaine)';} // ~0.01%
+
+  const doseOp=dosePrimaryDist*factor; // mGy
+  const doseOpuSv=doseOp*1000; // μSv (wR=1 for X-rays)
+
+  // Hourly rate if continuous
+  const ratePerShot=doseOpuSv;
+  const shotsPerHour=time<1?3600/Math.max(time*3,1):1; // rough estimate
+  const hourlyRate=time>=60?doseOpuSv*(3600/time):ratePerShot; // μSv if running 1h
+
+  // Annual dose estimate
+  const examsPerYear=time<1?5000:time<60?1000:200; // rough by type
+  const annualDose=doseOpuSv*examsPerYear/1000; // mSv
+
+  const zi=zoneInfo(hourlyRate);
+  const c=doseOpuSv>100?'var(--d)':doseOpuSv>10?'var(--a)':'var(--g)';
+
+  document.getElementById('xr').classList.remove('hidden');
+  document.getElementById('xrc').innerHTML=`
+    <div class="dv" style="color:${c}">${doseOpuSv<1?doseOpuSv.toFixed(3):doseOpuSv<100?doseOpuSv.toFixed(1):doseOpuSv.toFixed(0)} <span class="du">μSv/tir</span></div>
+    <div style="text-align:center;font-size:.7rem;color:var(--tm)">${posLabel} — à ${dist} m</div>
+    <div class="tc3" style="margin-top:12px">
+      <div class="kpi"><div class="kv" style="color:var(--a)">${kv}</div><div class="kl">kV</div></div>
+      <div class="kpi"><div class="kv">${mAs.toFixed(1)}</div><div class="kl">mAs total</div></div>
+      <div class="kpi"><div class="kv">${output.toFixed(3)}</div><div class="kl">mGy/mAs à 1m</div></div>
+    </div>
+    <table style="margin-top:10px">
+      ${tr('Tension',kv+' kV')}
+      ${tr('Courant',ma+' mA')}
+      ${tr('Temps',time<1?(time*1000).toFixed(0)+' ms':time.toFixed(1)+' s')}
+      ${tr('Charge',mAs.toFixed(1)+' mAs')}
+      ${tr('Position',posLabel+(pos==='primary'?' ⚠️ DANGER':''))}
+      ${tr('Distance',dist+' m')}
+      ${tr('Dose primaire 1m',dosePrimary1m.toFixed(3)+' mGy')}
+      ${tr('Facteur '+posLabel.toLowerCase(),'×'+(factor<0.01?factor.toExponential(1):factor))}
+      ${tr('Dose opérateur/tir',`<b style="color:${c}">${doseOpuSv<1?doseOpuSv.toFixed(3):doseOpuSv.toFixed(1)} μSv</b>`)}
+      ${tr('CDA plomb à '+kv+' kV',xCDA(kv,'Pb').toFixed(2)+' mm Pb')}
+      ${tr('CDA béton à '+kv+' kV',xCDA(kv,'Beton').toFixed(0)+' mm béton')}
+    </table>
+    ${pos==='primary'?'<div class="ib" style="border-color:var(--d);margin-top:8px">🚨 <b>ATTENTION :</b> Position dans le faisceau primaire ! Aucun travailleur ne doit se trouver dans le faisceau direct. Ces valeurs ne sont indiquées qu\'à titre de sensibilisation au risque.</div>':''}
+    <div class="ib" style="margin-top:8px"><b>Optimisation :</b> Distance (×2 = ÷4), temps d'expo minimum, écran de protection (paravent plombé, tablier), collimation serrée du faisceau. En radioscopie : mode pulsé, dernière image mémorisée.</div>
+    <div class="ib" style="margin-top:6px;border-color:var(--p)"><b>Dosimétrie recommandée :</b><br>
+    ${kv>100?'• Dosimètre passif poitrine (sous tablier) + bague si mains proches du faisceau<br>':'• Dosimètre passif poitrine<br>'}
+    ${pos==='scatter'&&kv>70?'• Dosimètre cristallin recommandé (Hp(3)) si >15 mSv/an estimé<br>':''}
+    • Dosimètre opérationnel si zone contrôlée jaune ou supérieure</div>`;
+  document.getElementById('xr').scrollIntoView({behavior:'smooth'});
+}
+
+function calcXshield(){
+  const kv=+document.getElementById('xskv').value;
+  const mat=document.getElementById('xsmat').value;
+  const h0=+document.getElementById('xsh0').value;
+  const x=+document.getElementById('xsx').value;
+  if(!kv||!h0)return;
+  const cda=xCDA(kv,mat);
+  const hf=h0*Math.pow(2,-x/cda);
+  const att=(1-hf/h0)*100;
+  const nCDA=x/cda;
+  const zi=zoneInfo(hf);
+  const matN={Pb:'Plomb',Beton:'Béton',Ba:'Plâtre baryté',Verre:'Verre plombé'};
+  const fmtH=hf.toFixed(3)+' μSv/h';
+
+  document.getElementById('xr').classList.remove('hidden');
+  document.getElementById('xrc').innerHTML=`
+    <div class="dv" style="color:${zi.c}">${fmtH}</div>
+    <div style="text-align:center"><span class="${zi.cls}" style="padding:3px 10px">${zi.z}</span></div>
+    <div class="tc3" style="margin-top:12px">
+      <div class="kpi"><div class="kv" style="color:var(--g)">${att.toFixed(1)}%</div><div class="kl">Atténuation</div></div>
+      <div class="kpi"><div class="kv">${cda.toFixed(2)}</div><div class="kl">CDA (mm ${matN[mat]})</div></div>
+      <div class="kpi"><div class="kv">${nCDA.toFixed(1)}</div><div class="kl">Nb de CDA</div></div>
+    </div>
+    <table style="margin-top:10px">
+      ${tr('Tension',kv+' kV')}
+      ${tr('Matériau',matN[mat])}
+      ${tr('Épaisseur',x+' mm')}
+      ${tr('Débit initial',h0+' μSv/h')}
+      ${tr('Débit résiduel',`<b>${fmtH}</b>`)}
+    </table>
+    <div class="ib" style="margin-top:8px"><b>Normes locaux :</b> Un cabinet dentaire nécessite typiquement 1 mm Pb ou 14 cm béton (murs). Un bloc de radiologie interventionnelle : 2-3 mm Pb. Un bunker CND 300 kV : 30-50 cm béton baryté.</div>`;
+  document.getElementById('xr').scrollIntoView({behavior:'smooth'});
+}
+
+init();
+</script>
+</body>
+</html>

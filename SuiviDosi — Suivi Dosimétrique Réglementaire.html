@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SuiviDosi — Suivi Dosimétrique Réglementaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#38bdf8;--ad:rgba(56,189,248,.1);--w:#f59e0b;--d:#ef4444;--g:#22c55e;--p:#a78bfa;--tl:#2dd4bf;--sky:#38bdf8;--r:8px}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f5f9;--s:#fff;--s2:#e8edf4;--s3:#dce3ed;--bd:#c5cdd8;--t:#1e293b;--tm:#64748b;--a:#0284c7;--ad:rgba(2,132,199,.08);--d:#dc2626;--g:#16a34a;--p:#7c3aed;--tl:#0d9488;--sky:#0284c7}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden}
+.app{max-width:1100px;margin:0 auto;padding:16px 14px 60px}
+header{text-align:center;padding:20px 0 16px;border-bottom:1px solid var(--bd);margin-bottom:16px}
+header h1{font-size:1.5rem;font-weight:800;color:var(--a)}
+header .sub{color:var(--tm);font-size:.75rem;margin-top:3px}
+.badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--ad);color:var(--a);margin-top:5px;font-family:'JetBrains Mono',monospace}
+.tabs{display:flex;gap:2px;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:0;padding:7px 5px;border:none;background:0;color:var(--tm);font-family:inherit;font-size:.68rem;font-weight:500;cursor:pointer;border-radius:5px;transition:.2s;white-space:nowrap}
+.tab.active{background:var(--a);color:#fff}.tab:hover:not(.active){background:var(--s2)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--a);display:flex;align-items:center;gap:5px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+@media(max-width:600px){.fg,.fg3{grid-template-columns:1fr}}
+.fm{display:flex;flex-direction:column;gap:3px}
+label{font-size:.68rem;font-weight:500;color:var(--tm)}
+select,input[type="number"],input[type="text"],input[type="date"]{padding:7px 9px;border:1px solid var(--bd);border-radius:5px;background:var(--s2);color:var(--t);font-family:inherit;font-size:.78rem;outline:0}
+.btn{padding:7px 14px;border:none;border-radius:5px;font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s}
+.bp{background:var(--a);color:#fff}.bs{background:var(--s2);color:var(--t);border:1px solid var(--bd)}
+.bd{background:var(--d);color:#fff}.bg{background:var(--g);color:#fff}
+.actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:.73rem;margin-top:8px}
+th,td{padding:5px 7px;text-align:left;border-bottom:1px solid var(--bd)}
+th{color:var(--tm);font-weight:500;font-size:.63rem;text-transform:uppercase}
+.ib{padding:9px 12px;border-left:3px solid var(--a);background:var(--ad);border-radius:0 5px 5px 0;font-size:.73rem;line-height:1.7;margin-top:9px}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.63rem;font-weight:600}
+.tg{background:rgba(34,197,94,.14);color:var(--g)}.to{background:rgba(245,158,11,.14);color:var(--w)}.tr{background:rgba(239,68,68,.14);color:var(--d)}.ta{background:rgba(56,189,248,.14);color:var(--a)}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.kpi{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:10px;text-align:center}
+.kpi-val{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+.kpi-lab{font-size:.63rem;color:var(--tm);margin-top:3px}
+.gauge{width:100%;height:18px;background:var(--s2);border-radius:9px;overflow:hidden;margin:5px 0}
+.gauge-fill{height:100%;border-radius:9px;transition:.5s}
+.footer{text-align:center;padding:16px 0;font-size:.62rem;color:var(--tm);border-top:1px solid var(--bd);margin-top:24px;line-height:1.8}
+#chart-svg{width:100%;max-height:280px}
+@media print{body{background:#fff!important;color:#000!important}.tabs,.btn,.footer{display:none!important}.panel{display:block!important}.card{border:1px solid #ccc;break-inside:avoid;background:#fff!important}@page{margin:12mm}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>📊 SuiviDosi</h1>
+  <div class="sub">Suivi Dosimétrique Réglementaire — Catégories — Aptitude — ESS</div>
+  <div class="badge">RadioPrev Pro 4/5 • R.4451-12 à R.4451-82 • Arrêté 26/10/2005</div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="sT('register',this)">📋 Registre</button>
+  <button class="tab" onclick="sT('cumul',this)">📊 Cumul</button>
+  <button class="tab" onclick="sT('cat',this)">🏷️ Catégorie</button>
+  <button class="tab" onclick="sT('apt',this)">🩺 Aptitude</button>
+  <button class="tab" onclick="sT('ess',this)">⚠️ ESS</button>
+  <button class="tab" onclick="sT('ref',this)">📚 Réf.</button>
+</div>
+
+<!-- REGISTRE -->
+<div id="tab-register" class="panel active">
+  <div class="card">
+    <h2>📋 Fiche de suivi dosimétrique individuelle</h2>
+    <div class="fg">
+      <div class="fm"><label>Nom / identifiant</label><input type="text" id="r-name" placeholder="Ex: Martin J."></div>
+      <div class="fm"><label>N° SISERI</label><input type="text" id="r-siseri" placeholder="Ex: 123456789"></div>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <div class="fm"><label>Catégorie</label><select id="r-cat"><option value="A">Catégorie A</option><option value="B" selected>Catégorie B</option></select></div>
+      <div class="fm"><label>Année</label><input type="number" id="r-year" value="2026" min="2000" max="2040"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>➕ Ajouter une mesure dosimétrique</h2>
+    <div class="fg3">
+      <div class="fm"><label>Période</label>
+        <select id="m-period">
+          <option value="">— Mois —</option>
+          <option>Janvier</option><option>Février</option><option>Mars</option><option>Avril</option>
+          <option>Mai</option><option>Juin</option><option>Juillet</option><option>Août</option>
+          <option>Septembre</option><option>Octobre</option><option>Novembre</option><option>Décembre</option>
+          <option>T1 (trim.)</option><option>T2 (trim.)</option><option>T3 (trim.)</option><option>T4 (trim.)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Hp(10) corps entier (mSv)</label><input type="number" id="m-hp10" step="0.01" value="0"></div>
+      <div class="fm"><label>Hp(0.07) extrémités (mSv)</label><input type="number" id="m-hp007" step="0.01" value="0"></div>
+    </div>
+    <div class="fg3" style="margin-top:8px">
+      <div class="fm"><label>Dose cristallin Hp(3) (mSv)</label><input type="number" id="m-hp3" step="0.01" value="0"></div>
+      <div class="fm"><label>Dose interne E(50) (mSv)</label><input type="number" id="m-eint" step="0.001" value="0"></div>
+      <div class="fm"><label>Neutrons (mSv)</label><input type="number" id="m-neut" step="0.01" value="0"></div>
+    </div>
+    <div class="actions">
+      <button class="btn bp" onclick="addMeasure()">Ajouter la mesure</button>
+      <button class="btn bs" onclick="clearAll()">Réinitialiser</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📊 Historique annuel</h2>
+    <div id="dose-table"></div>
+  </div>
+</div>
+
+<!-- CUMUL -->
+<div id="tab-cumul" class="panel">
+  <div class="card">
+    <h2>📊 Bilan dosimétrique cumulé</h2>
+    <div id="kpi-zone" class="kpi-row"></div>
+    <div id="gauges"></div>
+    <div id="chart-zone" style="margin-top:12px"></div>
+  </div>
+  <div class="card">
+    <h2>📈 Limites réglementaires annuelles</h2>
+    <table>
+      <thead><tr><th>Grandeur</th><th>Limite travailleur</th><th>Limite public</th><th>Référence</th></tr></thead>
+      <tbody>
+        <tr><td>Dose efficace E corps entier</td><td><b>20 mSv/an</b> (moy. 5 ans ≤100 mSv)</td><td>1 mSv/an</td><td>R.4451-12</td></tr>
+        <tr><td>Dose équiv. cristallin Hp(3)</td><td><b>20 mSv/an</b></td><td>15 mSv/an</td><td>R.4451-13 (2018)</td></tr>
+        <tr><td>Dose équiv. extrémités Hp(0.07)</td><td><b>500 mSv/an</b></td><td>50 mSv/an</td><td>R.4451-13</td></tr>
+        <tr><td>Dose équiv. peau (1 cm²)</td><td><b>500 mSv/an</b></td><td>50 mSv/an</td><td>R.4451-13</td></tr>
+        <tr><td>Femme enceinte (grossesse déclarée)</td><td colspan="2"><b>1 mSv de l'embryon sur durée de la grossesse</b></td><td>R.4451-46</td></tr>
+        <tr><td>Apprentis/étudiants 16-18 ans</td><td colspan="2"><b>6 mSv/an corps entier, 150 mSv extrémités</b></td><td>R.4451-52</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CATÉGORIE -->
+<div id="tab-cat" class="panel">
+  <div class="card">
+    <h2>🏷️ Détermination de la catégorie de travailleur</h2>
+    <div class="fg">
+      <div class="fm"><label>Dose efficace annuelle susceptible d'être reçue (mSv)</label><input type="number" id="cat-dose" step="0.1" value="0"></div>
+      <div class="fm"><label>Dose cristallin annuelle susceptible (mSv)</label><input type="number" id="cat-crist" step="0.1" value="0"></div>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <div class="fm"><label>Dose extrémités annuelle susceptible (mSv)</label><input type="number" id="cat-ext" step="0.1" value="0"></div>
+      <div class="fm"><label>Exposition neutronique possible ?</label><select id="cat-neut"><option value="0">Non</option><option value="1">Oui</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcCat()">Déterminer la catégorie</button></div>
+    <div id="cat-result" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>📊 Critères de classement (R.4451-57)</h2>
+    <table>
+      <thead><tr><th></th><th>Catégorie A</th><th>Catégorie B</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:inherit;font-weight:600">Dose efficace E</td><td>&gt;6 mSv/an</td><td>1 à 6 mSv/an</td></tr>
+        <tr><td style="font-family:inherit;font-weight:600">Dose cristallin</td><td>&gt;15 mSv/an</td><td>—</td></tr>
+        <tr><td style="font-family:inherit;font-weight:600">Dose extrémités/peau</td><td>&gt;150 mSv/an</td><td>—</td></tr>
+        <tr><td style="font-family:inherit;font-weight:600">Dosimétrie</td><td>Passive + opérationnelle</td><td>Passive (+ opérat. si zone contrôlée)</td></tr>
+        <tr><td style="font-family:inherit;font-weight:600">Suivi médical</td><td>SIR — examen tous les ans</td><td>SI — examen tous les 4 ans (2 si nuit)</td></tr>
+        <tr><td style="font-family:inherit;font-weight:600">Carte individuelle</td><td>Oui (SISERI)</td><td>Oui (SISERI)</td></tr>
+      </tbody>
+    </table>
+    <div class="ib" style="margin-top:8px;border-color:var(--w);background:rgba(245,158,11,.08)">
+      <b>SIR</b> = Suivi Individuel Renforcé (médecin du travail obligatoirement, pas d'infirmier seul).<br>
+      <b>SI</b> = Suivi Individuel adapté.
+    </div>
+  </div>
+</div>
+
+<!-- APTITUDE -->
+<div id="tab-apt" class="panel">
+  <div class="card">
+    <h2>🩺 Check-list aptitude médicale — Poste exposé RI</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:10px">Éléments à vérifier lors de la visite médicale d'aptitude (R.4624-22 et suivants, avis HCSP).</p>
+    <div id="apt-list"></div>
+    <div class="actions">
+      <button class="btn bp" onclick="calcApt()">Évaluer l'aptitude</button>
+      <button class="btn bs" onclick="resetApt()">Tout décocher</button>
+    </div>
+    <div id="apt-result" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ESS -->
+<div id="tab-ess" class="panel">
+  <div class="card">
+    <h2>⚠️ Évaluation ESS / Dépassement de limites</h2>
+    <div class="fg">
+      <div class="fm"><label>Dose reçue (mSv)</label><input type="number" id="ess-dose" step="0.1" value="0"></div>
+      <div class="fm"><label>Type d'exposition</label>
+        <select id="ess-type">
+          <option value="ext">Externe corps entier</option>
+          <option value="crist">Cristallin</option>
+          <option value="extr">Extrémités</option>
+          <option value="int">Interne (E(50))</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <div class="fm"><label>Catégorie du travailleur</label><select id="ess-cat"><option value="A">Cat. A</option><option value="B">Cat. B</option></select></div>
+      <div class="fm"><label>Grossesse déclarée ?</label><select id="ess-preg"><option value="0">Non</option><option value="1">Oui</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcESS()">Évaluer</button></div>
+    <div id="ess-result" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>📋 Échelle ESS/ASN</h2>
+    <table>
+      <thead><tr><th>Niveau</th><th>Critère dosimétrique</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag ta">Niveau 0</span></td><td style="font-family:inherit">Dose conforme aux limites</td><td style="font-family:inherit">Suivi de routine</td></tr>
+        <tr><td><span class="tag to">Niveau 1 — Anomalie</span></td><td style="font-family:inherit">Dépassement d'une contrainte de dose ou du ¼ de la limite</td><td style="font-family:inherit">Enquête PCR + MdT informé</td></tr>
+        <tr><td><span class="tag to">Niveau 2 — Incident</span></td><td style="font-family:inherit">Dépassement limite réglementaire (20 mSv E)</td><td style="font-family:inherit">Déclaration ASN 48h + retrait poste + bilan médical</td></tr>
+        <tr><td><span class="tag tr">Niveau 3 — Incident grave</span></td><td style="font-family:inherit">Dépassement &gt;5× la limite (100 mSv E)</td><td style="font-family:inherit">Déclaration ASN immédiate + hospitalisation + IRSN</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RÉFÉRENCES -->
+<div id="tab-ref" class="panel">
+  <div class="card">
+    <h2>📚 Cadre réglementaire — Radioprotection des travailleurs</h2>
+    <table>
+      <thead><tr><th>Texte</th><th>Objet</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:inherit">R.4451-1 à R.4451-144</td><td style="font-family:inherit">Prévention des risques liés aux rayonnements ionisants (Code du travail)</td></tr>
+        <tr><td style="font-family:inherit">Arrêté 26/10/2005</td><td style="font-family:inherit">Modalités de contrôle de radioprotection</td></tr>
+        <tr><td style="font-family:inherit">Arrêté 17/07/2013</td><td style="font-family:inherit">Carte individuelle de suivi médical</td></tr>
+        <tr><td style="font-family:inherit">Arrêté 15/05/2006</td><td style="font-family:inherit">Conditions de délimitation et signalisation des zones</td></tr>
+        <tr><td style="font-family:inherit">Directive 2013/59/Euratom</td><td style="font-family:inherit">Normes de base de radioprotection (BSS)</td></tr>
+        <tr><td style="font-family:inherit">CIPR 103 (2007)</td><td style="font-family:inherit">Recommandations générales de radioprotection</td></tr>
+        <tr><td style="font-family:inherit">Guide ASN n°20</td><td style="font-family:inherit">Gestion des situations incidentelles/accidentelles</td></tr>
+        <tr><td style="font-family:inherit">SISERI (IRSN)</td><td style="font-family:inherit">Système d'Information de la Surveillance de l'Exposition aux RI</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="footer">SuiviDosi v1.0 — Module RadioPrev Pro 4/5<br>Code du travail R.4451 • Directive 2013/59/Euratom • CIPR 103<br>PréventIA-LaB © 2026</footer>
+</div>
+
+<script>
+function sT(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(btn)btn.classList.add('active')}
+
+// ═══ DOSE REGISTER ═══
+let measures=[];
+function addMeasure(){
+  const per=document.getElementById('m-period').value;if(!per)return alert('Sélectionnez une période');
+  measures.push({period:per,hp10:+document.getElementById('m-hp10').value,hp007:+document.getElementById('m-hp007').value,hp3:+document.getElementById('m-hp3').value,eint:+document.getElementById('m-eint').value,neut:+document.getElementById('m-neut').value});
+  renderTable();updateCumul();
+  ['m-hp10','m-hp007','m-hp3','m-eint','m-neut'].forEach(id=>{document.getElementById(id).value=0});
+  document.getElementById('m-period').value='';
+}
+function clearAll(){measures=[];renderTable();updateCumul()}
+function renderTable(){
+  if(!measures.length){document.getElementById('dose-table').innerHTML='<p style="color:var(--tm);font-size:.73rem">Aucune mesure enregistrée.</p>';return}
+  let html='<table><thead><tr><th>Période</th><th>Hp(10) mSv</th><th>Hp(0.07) mSv</th><th>Hp(3) mSv</th><th>E(50) int. mSv</th><th>Neutrons mSv</th><th>E totale mSv</th><th></th></tr></thead><tbody>';
+  measures.forEach((m,i)=>{
+    const et=m.hp10+m.eint+m.neut;
+    html+=`<tr><td>${m.period}</td><td>${m.hp10.toFixed(2)}</td><td>${m.hp007.toFixed(2)}</td><td>${m.hp3.toFixed(2)}</td><td>${m.eint.toFixed(3)}</td><td>${m.neut.toFixed(2)}</td><td style="font-weight:700">${et.toFixed(2)}</td><td><button class="btn bs" style="padding:2px 6px;font-size:.6rem" onclick="delM(${i})">✕</button></td></tr>`;
+  });
+  const totals={hp10:0,hp007:0,hp3:0,eint:0,neut:0};
+  measures.forEach(m=>{totals.hp10+=m.hp10;totals.hp007+=m.hp007;totals.hp3+=m.hp3;totals.eint+=m.eint;totals.neut+=m.neut});
+  const etot=totals.hp10+totals.eint+totals.neut;
+  html+=`<tr style="font-weight:700;border-top:2px solid var(--a)"><td>CUMUL</td><td>${totals.hp10.toFixed(2)}</td><td>${totals.hp007.toFixed(2)}</td><td>${totals.hp3.toFixed(2)}</td><td>${totals.eint.toFixed(3)}</td><td>${totals.neut.toFixed(2)}</td><td style="color:${etot>20?'var(--d)':etot>6?'var(--w)':'var(--g)'}">${etot.toFixed(2)}</td><td></td></tr>`;
+  html+='</tbody></table>';
+  document.getElementById('dose-table').innerHTML=html;
+}
+function delM(i){measures.splice(i,1);renderTable();updateCumul()}
+
+function updateCumul(){
+  const totals={hp10:0,hp007:0,hp3:0,eint:0,neut:0};
+  measures.forEach(m=>{totals.hp10+=m.hp10;totals.hp007+=m.hp007;totals.hp3+=m.hp3;totals.eint+=m.eint;totals.neut+=m.neut});
+  const etot=totals.hp10+totals.eint+totals.neut;
+  const ecol=etot>20?'var(--d)':etot>6?'var(--w)':'var(--g)';
+  const ccol=totals.hp3>20?'var(--d)':totals.hp3>15?'var(--w)':'var(--g)';
+  const xcol=totals.hp007>500?'var(--d)':totals.hp007>150?'var(--w)':'var(--g)';
+  
+  document.getElementById('kpi-zone').innerHTML=`
+    <div class="kpi"><div class="kpi-val" style="color:${ecol}">${etot.toFixed(2)}</div><div class="kpi-lab">E totale (mSv) / 20</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:${ccol}">${totals.hp3.toFixed(2)}</div><div class="kpi-lab">Cristallin (mSv) / 20</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:${xcol}">${totals.hp007.toFixed(2)}</div><div class="kpi-lab">Extrémités (mSv) / 500</div></div>
+    <div class="kpi"><div class="kpi-val">${measures.length}</div><div class="kpi-lab">Mesures</div></div>`;
+  
+  document.getElementById('gauges').innerHTML=`
+    <div style="font-size:.68rem;color:var(--tm);margin-bottom:3px">Dose efficace E — ${(etot/20*100).toFixed(1)}% de la limite</div>
+    <div class="gauge"><div class="gauge-fill" style="width:${Math.min(etot/20*100,100)}%;background:${ecol}"></div></div>
+    <div style="font-size:.68rem;color:var(--tm);margin-bottom:3px;margin-top:8px">Cristallin Hp(3) — ${(totals.hp3/20*100).toFixed(1)}% de la limite</div>
+    <div class="gauge"><div class="gauge-fill" style="width:${Math.min(totals.hp3/20*100,100)}%;background:${ccol}"></div></div>
+    <div style="font-size:.68rem;color:var(--tm);margin-bottom:3px;margin-top:8px">Extrémités Hp(0.07) — ${(totals.hp007/500*100).toFixed(1)}% de la limite</div>
+    <div class="gauge"><div class="gauge-fill" style="width:${Math.min(totals.hp007/500*100,100)}%;background:${xcol}"></div></div>`;
+  
+  // Histogram SVG
+  if(measures.length>0){
+    const W=700,H=220,M=40;
+    const barW=Math.min(50,(W-M*2)/measures.length-5);
+    const maxV=Math.max(20,...measures.map(m=>m.hp10+m.eint+m.neut));
+    const sc=v=>(H-M*2)*(v/maxV);
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" id="chart-svg">`;
+    svg+=`<line x1="${M}" y1="${H-M}" x2="${W-M}" y2="${H-M}" stroke="var(--bd)" stroke-width="1"/>`;
+    // limit line at 20 mSv
+    const y20=H-M-sc(20);
+    svg+=`<line x1="${M}" y1="${y20}" x2="${W-M}" y2="${y20}" stroke="var(--d)" stroke-width="1" stroke-dasharray="4,3"/>`;
+    svg+=`<text x="${W-M+3}" y="${y20+3}" fill="var(--d)" font-size="9">20 mSv</text>`;
+    // limit 6 mSv
+    const y6=H-M-sc(6);
+    svg+=`<line x1="${M}" y1="${y6}" x2="${W-M}" y2="${y6}" stroke="var(--w)" stroke-width="1" stroke-dasharray="4,3"/>`;
+    svg+=`<text x="${W-M+3}" y="${y6+3}" fill="var(--w)" font-size="9">6 mSv</text>`;
+    measures.forEach((m,i)=>{
+      const v=m.hp10+m.eint+m.neut;
+      const bh=sc(v);const x=M+i*(barW+5)+5;const y=H-M-bh;
+      const col=v>20?'var(--d)':v>6?'var(--w)':'var(--a)';
+      svg+=`<rect x="${x}" y="${y}" width="${barW}" height="${bh}" fill="${col}" rx="3" opacity="0.8"/>`;
+      svg+=`<text x="${x+barW/2}" y="${y-4}" fill="var(--t)" font-size="9" text-anchor="middle">${v.toFixed(1)}</text>`;
+      svg+=`<text x="${x+barW/2}" y="${H-M+12}" fill="var(--tm)" font-size="8" text-anchor="middle">${m.period.substring(0,3)}</text>`;
+    });
+    svg+=`</svg>`;
+    document.getElementById('chart-zone').innerHTML=svg;
+  }
+}
+
+// ═══ CATÉGORIE ═══
+function calcCat(){
+  const d=+document.getElementById('cat-dose').value;
+  const c=+document.getElementById('cat-crist').value;
+  const x=+document.getElementById('cat-ext').value;
+  const n=+document.getElementById('cat-neut').value;
+  let cat='non classé';let cls='tg';let details=[];
+  if(d>6||c>15||x>150){cat='A';cls='tr';details.push('SIR obligatoire (médecin du travail)');details.push('Dosimétrie passive ET opérationnelle');details.push('Visite médicale annuelle');if(n)details.push('Dosimétrie neutronique requise')}
+  else if(d>1||c>1||x>1){cat='B';cls='to';details.push('Suivi individuel adapté');details.push('Dosimétrie passive obligatoire');details.push('Visite tous les 4 ans (2 si travail de nuit)')}
+  else{details.push('Dose susceptible < 1 mSv → pas de classement travailleur exposé');details.push('Suivi médical de droit commun')}
+  document.getElementById('cat-result').innerHTML=`<div class="ib" style="border-color:${cat==='A'?'var(--d)':cat==='B'?'var(--w)':'var(--g)'}"><span class="tag ${cls}" style="font-size:.8rem;padding:3px 10px">${cat==='A'?'CATÉGORIE A':cat==='B'?'CATÉGORIE B':'NON CLASSÉ'}</span><br><br>${details.map(d=>'• '+d).join('<br>')}</div>`;
+}
+
+// ═══ APTITUDE ═══
+const APT_ITEMS=[
+  {id:'apt-nfs',label:"NFS récente (< 1 an) — lymphocytes ≥ 1500/mm³",cat:'bio',crit:true},
+  {id:'apt-crea',label:"Créatinine / DFG — fonction rénale normale",cat:'bio',crit:false},
+  {id:'apt-bilan',label:"Bilan hépatique normal (ASAT/ALAT)",cat:'bio',crit:false},
+  {id:'apt-thyro',label:"TSH / T4 libre (si exposition iode radioactif)",cat:'bio',crit:false},
+  {id:'apt-ophta',label:"Examen ophtalmologique (cristallin) si cat. A ou exposition cristallin",cat:'exam',crit:true},
+  {id:'apt-derm',label:"Examen cutané (mains, avant-bras) si exposition extrémités",cat:'exam',crit:false},
+  {id:'apt-psy',label:"Évaluation psychologique — aptitude poste de sécurité",cat:'exam',crit:false},
+  {id:'apt-ant',label:"Antécédents : hémopathie, cancer, maladie auto-immune éliminés",cat:'atcd',crit:true},
+  {id:'apt-gro',label:"Déclaration de grossesse vérifiée (femmes en âge de procréer)",cat:'atcd',crit:true},
+  {id:'apt-form',label:"Formation radioprotection à jour (PCR ou organisme agréé)",cat:'admin',crit:true},
+  {id:'apt-dosi',label:"Dosimétrie passive et opérationnelle attribuée",cat:'admin',crit:true},
+  {id:'apt-siseri',label:"Inscription SISERI effectuée",cat:'admin',crit:true},
+  {id:'apt-fiche',label:"Fiche de poste radioprotection établie par PCR",cat:'admin',crit:true},
+];
+
+function renderApt(){
+  const cats={bio:'🔬 Biologie',exam:'🩺 Examens cliniques',atcd:'📋 Antécédents',admin:'📂 Administratif'};
+  let html='';let curCat='';
+  APT_ITEMS.forEach(it=>{
+    if(it.cat!==curCat){curCat=it.cat;html+=`<div style="font-size:.73rem;font-weight:600;color:var(--a);margin:10px 0 5px">${cats[it.cat]}</div>`}
+    html+=`<label style="display:flex;align-items:center;gap:7px;font-size:.73rem;padding:4px 0;cursor:pointer"><input type="checkbox" id="${it.id}"> ${it.label}${it.crit?' <span class="tag tr" style="font-size:.55rem">Obligatoire</span>':''}</label>`;
+  });
+  document.getElementById('apt-list').innerHTML=html;
+}
+function calcApt(){
+  let ok=0;let total=APT_ITEMS.length;let missing=[];
+  APT_ITEMS.forEach(it=>{
+    if(document.getElementById(it.id).checked)ok++;
+    else if(it.crit)missing.push(it.label);
+  });
+  const pct=(ok/total*100).toFixed(0);
+  const cls=missing.length>0?'tr':pct<80?'to':'tg';
+  let html=`<div class="ib" style="border-color:${missing.length?'var(--d)':'var(--g)'}">
+    <b>${ok}/${total} éléments validés (${pct}%)</b><br>`;
+  if(missing.length){html+=`<br><b style="color:var(--d)">Éléments obligatoires manquants :</b><br>${missing.map(m=>'❌ '+m).join('<br>')}<br><br><span class="tag tr">APTITUDE NON VALIDABLE en l'état</span>`}
+  else{html+=`<br><span class="tag tg" style="font-size:.8rem">✅ AVIS D'APTITUDE FAVORABLE</span><br><br>Tous les éléments obligatoires sont remplis.`}
+  html+=`</div>`;
+  document.getElementById('apt-result').innerHTML=html;
+}
+function resetApt(){APT_ITEMS.forEach(it=>{document.getElementById(it.id).checked=false});document.getElementById('apt-result').innerHTML=''}
+
+// ═══ ESS ═══
+function calcESS(){
+  const dose=+document.getElementById('ess-dose').value;
+  const type=document.getElementById('ess-type').value;
+  const preg=+document.getElementById('ess-preg').value;
+  let lim=20;if(type==='extr')lim=500;if(type==='crist')lim=20;
+  if(preg)lim=1;
+  let level='0';let cls='ta';let actions=[];
+  if(dose>=lim*5){level='3';cls='tr';actions=['Déclaration ASN IMMÉDIATE (téléphone)','Retrait immédiat du poste exposé','Hospitalisation — bilan hématologique urgent','Expertise IRSN — reconstitution dosimétrique','Enquête judiciaire possible']}
+  else if(dose>=lim){level='2';cls='tr';actions=['Déclaration ASN sous 48h (formulaire ESS)','Retrait du poste exposé','Bilan médical complet (NFS, caryotype si >100 mSv)','Enquête PCR — analyse des causes','Mise à jour DUERP','Suivi médical renforcé post-professionnel']}
+  else if(dose>=lim/4){level='1';cls='to';actions=['Enquête PCR — recherche de l\'origine du dépassement','Information du médecin du travail','Vérification des protections collectives et individuelles','Éventuelle déclaration ASN si événement significatif','Revue des pratiques de travail']}
+  else{actions=['Dose conforme aux limites réglementaires','Suivi dosimétrique de routine','Aucune action corrective requise'];cls='ta'}
+  
+  document.getElementById('ess-result').innerHTML=`<div class="ib" style="border-color:${level>='2'?'var(--d)':level==='1'?'var(--w)':'var(--g)'}">
+    <span class="tag ${cls}" style="font-size:.8rem;padding:3px 10px">Niveau ${level}</span>
+    &nbsp;Dose : <b>${dose} mSv</b> / limite ${lim} mSv (${(dose/lim*100).toFixed(1)}%)${preg?' — <span style="color:var(--d)">GROSSESSE</span>':''}
+    <br><br><b>Actions requises :</b><br>${actions.map(a=>'• '+a).join('<br>')}</div>`;
+}
+
+renderTable();updateCumul();renderApt();
+</script>
+</body>
+</html>

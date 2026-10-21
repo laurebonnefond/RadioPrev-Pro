@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AmbiPrev — Surveillance d'Ambiance Radiologique</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#a78bfa;--ad:rgba(167,139,250,.1);--w:#f59e0b;--d:#ef4444;--g:#22c55e;--p:#a78bfa;--tl:#2dd4bf;--sky:#38bdf8;--r:8px}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f5f9;--s:#fff;--s2:#e8edf4;--s3:#dce3ed;--bd:#c5cdd8;--t:#1e293b;--tm:#64748b;--a:#7c3aed;--ad:rgba(124,58,237,.08);--d:#dc2626;--g:#16a34a;--p:#7c3aed;--tl:#0d9488;--sky:#0284c7}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden}
+.app{max-width:1100px;margin:0 auto;padding:16px 14px 60px}
+header{text-align:center;padding:20px 0 16px;border-bottom:1px solid var(--bd);margin-bottom:16px}
+header h1{font-size:1.5rem;font-weight:800;color:var(--a)}
+header .sub{color:var(--tm);font-size:.75rem;margin-top:3px}
+.badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--ad);color:var(--a);margin-top:5px;font-family:'JetBrains Mono',monospace}
+.tabs{display:flex;gap:2px;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:0;padding:7px 5px;border:none;background:0;color:var(--tm);font-family:inherit;font-size:.68rem;font-weight:500;cursor:pointer;border-radius:5px;transition:.2s;white-space:nowrap}
+.tab.active{background:var(--a);color:#fff}.tab:hover:not(.active){background:var(--s2)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--a);display:flex;align-items:center;gap:5px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+@media(max-width:600px){.fg,.fg3{grid-template-columns:1fr}}
+.fm{display:flex;flex-direction:column;gap:3px}
+label{font-size:.68rem;font-weight:500;color:var(--tm)}
+select,input[type="number"],input[type="text"]{padding:7px 9px;border:1px solid var(--bd);border-radius:5px;background:var(--s2);color:var(--t);font-family:inherit;font-size:.78rem;outline:0}
+.btn{padding:7px 14px;border:none;border-radius:5px;font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s}
+.bp{background:var(--a);color:#fff}.bs{background:var(--s2);color:var(--t);border:1px solid var(--bd)}
+.actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:.73rem;margin-top:8px}
+th,td{padding:5px 7px;text-align:left;border-bottom:1px solid var(--bd)}
+th{color:var(--tm);font-weight:500;font-size:.63rem;text-transform:uppercase}
+.ib{padding:9px 12px;border-left:3px solid var(--a);background:var(--ad);border-radius:0 5px 5px 0;font-size:.73rem;line-height:1.7;margin-top:9px}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.63rem;font-weight:600}
+.tg{background:rgba(34,197,94,.14);color:var(--g)}.to{background:rgba(245,158,11,.14);color:var(--w)}.tr{background:rgba(239,68,68,.14);color:var(--d)}.ta{background:rgba(167,139,250,.14);color:var(--a)}.tb{background:rgba(56,189,248,.14);color:var(--sky)}
+.zone-badge{display:inline-block;padding:3px 10px;border-radius:5px;font-size:.73rem;font-weight:700;margin:3px}
+.z-surv{background:#0ea5e9;color:#fff}.z-ctrl{background:#eab308;color:#000}.z-spec{background:#f97316;color:#fff}.z-interdit{background:#dc2626;color:#fff}.z-libre{background:#22c55e;color:#fff}
+.result-box{padding:12px;border-radius:var(--r);border:1px solid var(--bd);margin-top:10px;font-size:.75rem;line-height:1.7}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.kpi{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:10px;text-align:center}
+.kpi-val{font-size:1.2rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+.kpi-lab{font-size:.63rem;color:var(--tm);margin-top:3px}
+.gauge{width:100%;height:16px;background:var(--s2);border-radius:8px;overflow:hidden;margin:4px 0}
+.gauge-fill{height:100%;border-radius:8px;transition:.5s}
+.footer{text-align:center;padding:16px 0;font-size:.62rem;color:var(--tm);border-top:1px solid var(--bd);margin-top:24px;line-height:1.8}
+@media print{body{background:#fff!important;color:#000!important}.tabs,.btn,.footer{display:none!important}.panel{display:block!important}.card{border:1px solid #ccc;break-inside:avoid;background:#fff!important}@page{margin:12mm}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>🌫️ AmbiPrev</h1>
+  <div class="sub">Surveillance d'Ambiance Radiologique — DAC — Contamination surfacique — Radon — Zonage</div>
+  <div class="badge">RadioPrev Pro 5/5 • Arrêté 15/05/2006 • R.4451-18 à R.4451-28</div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="sT('dac',this)">🌬️ DAC / LDCA</button>
+  <button class="tab" onclick="sT('surf',this)">📐 Contamination surf.</button>
+  <button class="tab" onclick="sT('radon',this)">🏠 Radon</button>
+  <button class="tab" onclick="sT('zonage',this)">🏗️ Zonage</button>
+  <button class="tab" onclick="sT('ref',this)">📚 Réf.</button>
+</div>
+
+<!-- DAC / LDCA -->
+<div id="tab-dac" class="panel active">
+  <div class="card">
+    <h2>🌬️ Concentration d'Activité dans l'Air — DAC / LDCA</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:10px">Évalue si la concentration atmosphérique d'un radionucléide est acceptable pour le travail sans protection respiratoire.</p>
+    <div class="fg3">
+      <div class="fm"><label>Radionucléide</label>
+        <select id="dac-nuc" onchange="updateDAC()">
+          <option value="">— Sélectionner —</option>
+          <option value="H-3">H-3 (Tritium HTO)</option>
+          <option value="C-14">C-14</option>
+          <option value="P-32">P-32</option>
+          <option value="S-35">S-35</option>
+          <option value="Cr-51">Cr-51</option>
+          <option value="Co-60">Co-60</option>
+          <option value="Sr-90">Sr-90</option>
+          <option value="Tc-99m">Tc-99m</option>
+          <option value="I-125">I-125</option>
+          <option value="I-131">I-131</option>
+          <option value="Cs-137">Cs-137</option>
+          <option value="Ir-192">Ir-192</option>
+          <option value="Ra-226">Ra-226</option>
+          <option value="U-238">U-238</option>
+          <option value="Pu-239">Pu-239</option>
+          <option value="Am-241">Am-241</option>
+        </select>
+      </div>
+      <div class="fm"><label>Activité mesurée dans l'air (Bq/m³)</label><input type="number" id="dac-meas" step="0.001" value="0"></div>
+      <div class="fm"><label>Durée d'exposition (h/jour)</label><input type="number" id="dac-dur" step="0.5" value="8"></div>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <div class="fm"><label>Forme chimique (AMAD 5 µm)</label>
+        <select id="dac-form"><option value="M">M — Modérée</option><option value="F">F — Rapide</option><option value="S">S — Lente</option></select>
+      </div>
+      <div class="fm"><label>Débit respiratoire (m³/h)</label><input type="number" id="dac-breath" step="0.1" value="1.2"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcDAC()">Calculer</button></div>
+    <div id="dac-result" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>📊 LDCA de référence (inhalation, AMAD 5 µm, forme M)</h2>
+    <table>
+      <thead><tr><th>Nucléide</th><th>e(50) inh M (Sv/Bq)</th><th>LDCA (Bq/m³)</th><th>DAC trav. (Bq/m³)</th></tr></thead>
+      <tbody id="ldca-table"></tbody>
+    </table>
+    <div class="ib">
+      <b>LDCA</b> = Limite Dérivée de Concentration dans l'Air → valeur maximale admissible pour le public (1 mSv/an, 2000h, 1.2 m³/h).<br>
+      <b>DAC</b> = Derived Air Concentration pour travailleurs → 20 mSv/an, 2000h, 1.2 m³/h.<br>
+      LDCA = 1×10⁻³ / (e(50) × 2400) Bq/m³ &nbsp;|&nbsp; DAC = 20 × LDCA
+    </div>
+  </div>
+</div>
+
+<!-- CONTAMINATION SURFACIQUE -->
+<div id="tab-surf" class="panel">
+  <div class="card">
+    <h2>📐 Contrôle de contamination surfacique</h2>
+    <div class="fg3">
+      <div class="fm"><label>Type de mesure</label>
+        <select id="surf-type">
+          <option value="direct">Mesure directe (contaminamètre)</option>
+          <option value="frottis">Frottis (10% transféré)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Activité mesurée (cps ou Bq)</label><input type="number" id="surf-act" step="0.1" value="0"></div>
+      <div class="fm"><label>Surface de détection sonde (cm²)</label><input type="number" id="surf-area" step="1" value="100"></div>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <div class="fm"><label>Rendement sonde (%)</label><input type="number" id="surf-eff" step="1" value="30"></div>
+      <div class="fm"><label>Type d'émetteur</label>
+        <select id="surf-emit"><option value="bg">β/γ émetteur</option><option value="a">α émetteur (hors actinides)</option><option value="act">Actinides (Pu, Am, Cm)</option></select>
+      </div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcSurf()">Évaluer</button></div>
+    <div id="surf-result" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>📊 Seuils de référence</h2>
+    <table>
+      <thead><tr><th>Type</th><th>Seuil libération</th><th>Seuil investigation</th><th>Seuil action</th></tr></thead>
+      <tbody>
+        <tr><td>β/γ émetteurs</td><td>4 Bq/cm²</td><td>0.4 Bq/cm²</td><td>>10 Bq/cm²</td></tr>
+        <tr><td>α émetteurs</td><td>0.4 Bq/cm²</td><td>0.04 Bq/cm²</td><td>>1 Bq/cm²</td></tr>
+        <tr><td>Actinides</td><td>0.04 Bq/cm²</td><td>0.004 Bq/cm²</td><td>>0.1 Bq/cm²</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RADON -->
+<div id="tab-radon" class="panel">
+  <div class="card">
+    <h2>🏠 Évaluation du risque radon</h2>
+    <div class="fg">
+      <div class="fm"><label>Concentration radon mesurée (Bq/m³)</label><input type="number" id="rn-conc" step="1" value="0"></div>
+      <div class="fm"><label>Durée d'exposition (h/an)</label><input type="number" id="rn-dur" step="100" value="1600"></div>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <div class="fm"><label>Type de local</label>
+        <select id="rn-type">
+          <option value="work">Lieu de travail (ERP, souterrain...)</option>
+          <option value="hab">Habitation / logement</option>
+        </select>
+      </div>
+      <div class="fm"><label>Facteur d'équilibre F</label><input type="number" id="rn-feq" step="0.1" value="0.4" min="0.1" max="1"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcRadon()">Calculer dose</button></div>
+    <div id="rn-result" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>📊 Niveaux de référence radon</h2>
+    <table>
+      <thead><tr><th>Contexte</th><th>Seuil d'action (Bq/m³)</th><th>Référence</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:inherit">Lieux de travail (Code du travail)</td><td><b>300 Bq/m³</b> (moyenne annuelle)</td><td style="font-family:inherit">R.4451-133 à R.4451-138</td></tr>
+        <tr><td style="font-family:inherit">ERP (Établissements Recevant du Public)</td><td><b>300 Bq/m³</b></td><td style="font-family:inherit">Décret 2018-434</td></tr>
+        <tr><td style="font-family:inherit">Habitations existantes</td><td><b>300 Bq/m³</b></td><td style="font-family:inherit">Directive 2013/59/Euratom</td></tr>
+        <tr><td style="font-family:inherit">Constructions neuves (objectif OMS)</td><td><b>100 Bq/m³</b></td><td style="font-family:inherit">OMS 2009</td></tr>
+      </tbody>
+    </table>
+    <div class="ib" style="margin-top:8px">
+      <b>Dose annuelle (mSv)</b> = C (Bq/m³) × F × t (h) × 9×10⁻⁶ mSv/(Bq·h/m³)<br>
+      F = facteur d'équilibre Rn-222/descendants (typiquement 0.4 intérieur, 0.6 mine)<br>
+      Coefficient de dose CIPR 137 : 6.7×10⁻⁶ mSv/(Bq·h/m³) pour EEC, soit ~17×10⁻⁶ par Bq/m³ de radon (F=0.4).
+    </div>
+  </div>
+  <div class="card">
+    <h2>🗺️ Zones à potentiel radon significatif</h2>
+    <div class="ib">
+      <b>Zone 1</b> (faible) : Bassin parisien, Aquitaine sud, plaines...<br>
+      <b>Zone 2</b> (modéré) : Bordure de massifs, certains calcaires...<br>
+      <b>Zone 3</b> (élevé) : Massif central, Bretagne, Corse, Vosges, Alpes...<br>
+      <b>→ Limousin</b> : Zone 3 — potentiel radon ÉLEVÉ (granites, anciennes mines d'uranium).<br>
+      Carte interactive : <a href="https://www.irsn.fr/savoir-comprendre/environnement/connaitre-potentiel-radon-ma-commune" target="_blank" style="color:var(--a)">irsn.fr/radon</a>
+    </div>
+  </div>
+</div>
+
+<!-- ZONAGE -->
+<div id="tab-zonage" class="panel">
+  <div class="card">
+    <h2>🏗️ Détermination de zone à partir de mesures d'ambiance</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:10px">Arrêté du 15/05/2006 modifié — Délimitation des zones réglementées en fonction du débit de dose ambiant.</p>
+    <div class="fg">
+      <div class="fm"><label>Débit de dose ambiant mesuré (µSv/h)</label><input type="number" id="z-debit" step="0.1" value="0"></div>
+      <div class="fm"><label>Temps de séjour prévu (h/an)</label><input type="number" id="z-temps" step="100" value="2000"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcZone()">Déterminer la zone</button></div>
+    <div id="z-result" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>📊 Délimitation des zones (arrêté du 15/05/2006 modifié par l'arrêté du 28/08/2019)</h2>
+    <table>
+      <thead><tr><th>Zone</th><th>Dose efficace</th><th>Débit de dose H*(10)</th><th>Couleur</th></tr></thead>
+      <tbody>
+        <tr><td><span class="zone-badge z-libre">Non réglementée</span></td><td>&lt;80 µSv/mois</td><td>&lt;0.5 µSv/h</td><td style="font-family:inherit">—</td></tr>
+        <tr><td><span class="zone-badge z-surv">Zone surveillée</span></td><td>80 µSv – 7.5 µSv/h×t</td><td>0.5 – 7.5 µSv/h</td><td>Bleu</td></tr>
+        <tr><td><span class="zone-badge z-ctrl">Zone contrôlée</span></td><td>—</td><td>7.5 – 25 µSv/h</td><td>Jaune</td></tr>
+        <tr><td><span class="zone-badge z-ctrl" style="background:#f97316">Zone contrôlée spécialement réglementée</span></td><td>—</td><td>25 – 2 000 µSv/h</td><td>Orange</td></tr>
+        <tr><td><span class="zone-badge z-interdit">Zone interdite</span></td><td>—</td><td>&gt;2 000 µSv/h (2 mSv/h)</td><td>Rouge</td></tr>
+      </tbody>
+    </table>
+    <div class="ib" style="margin-top:8px;border-color:var(--w);background:rgba(245,158,11,.08)">
+      ⚠️ Ces seuils sont des valeurs <b>intégrées</b> sur 1 heure. Pour des expositions intermittentes, c'est la dose cumulée sur la période qui détermine la zone.<br>
+      Le zonage tient aussi compte de la contamination atmosphérique et surfacique (non seulement du débit de dose externe).
+    </div>
+  </div>
+</div>
+
+<!-- RÉFÉRENCES -->
+<div id="tab-ref" class="panel">
+  <div class="card">
+    <h2>📚 Références réglementaires — Surveillance d'ambiance</h2>
+    <table>
+      <thead><tr><th>Texte</th><th>Objet</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:inherit">R.4451-18 à R.4451-28</td><td style="font-family:inherit">Zonage — zones surveillées et contrôlées</td></tr>
+        <tr><td style="font-family:inherit">Arrêté 15/05/2006 modifié</td><td style="font-family:inherit">Délimitation et signalisation des zones</td></tr>
+        <tr><td style="font-family:inherit">Arrêté 28/08/2019</td><td style="font-family:inherit">Modifications zonage (BSS transposition)</td></tr>
+        <tr><td style="font-family:inherit">R.4451-133 à R.4451-138</td><td style="font-family:inherit">Radon en milieu de travail</td></tr>
+        <tr><td style="font-family:inherit">Décret 2018-434</td><td style="font-family:inherit">Radon dans les ERP</td></tr>
+        <tr><td style="font-family:inherit">Arrêté 5 mai 2009</td><td style="font-family:inherit">Valeurs de libération contamination surfacique</td></tr>
+        <tr><td style="font-family:inherit">CIPR 137 (2017)</td><td style="font-family:inherit">Coefficients de dose radon révisés</td></tr>
+        <tr><td style="font-family:inherit">Guide pratique IRSN</td><td style="font-family:inherit">Contamination surfacique — méthodes de contrôle</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="footer">AmbiPrev v1.0 — Module RadioPrev Pro 5/5<br>Arrêté 15/05/2006 • R.4451-18 à R.4451-28 • CIPR 137<br>PréventIA-LaB © 2026</footer>
+</div>
+
+<script>
+function sT(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(btn)btn.classList.add('active')}
+
+// ═══ DAC DATABASE ═══
+// e(50) inhalation M (Sv/Bq) — CIPR 68 + OIR partial
+const DAC_DB={
+  'H-3':{e50:1.8e-11,name:'Tritium HTO'},'C-14':{e50:5.8e-9,name:'Carbone-14'},
+  'P-32':{e50:3.4e-9,name:'Phosphore-32'},'S-35':{e50:1.4e-9,name:'Soufre-35'},
+  'Cr-51':{e50:3.7e-11,name:'Chrome-51'},'Co-60':{e50:3.1e-8,name:'Cobalt-60'},
+  'Sr-90':{e50:3.6e-8,name:'Strontium-90'},'Tc-99m':{e50:2.0e-11,name:'Technétium-99m'},
+  'I-125':{e50:1.4e-8,name:'Iode-125'},'I-131':{e50:1.1e-8,name:'Iode-131'},
+  'Cs-137':{e50:6.7e-9,name:'Césium-137'},'Ir-192':{e50:6.6e-9,name:'Iridium-192'},
+  'Ra-226':{e50:9.5e-6,name:'Radium-226'},'U-238':{e50:8.0e-6,name:'Uranium-238'},
+  'Pu-239':{e50:5.0e-5,name:'Plutonium-239'},'Am-241':{e50:4.2e-5,name:'Américium-241'},
+};
+
+function calcLDCA(e50){return 1e-3/(e50*2400)} // 1 mSv/an, 2000h, 1.2 m³/h
+function calcDACval(e50){return 20e-3/(e50*2400)} // 20 mSv/an
+
+// Populate LDCA table
+(function(){
+  let html='';
+  Object.entries(DAC_DB).forEach(([k,v])=>{
+    const ldca=calcLDCA(v.e50);const dac=calcDACval(v.e50);
+    html+=`<tr><td>${k}</td><td>${v.e50.toExponential(1)}</td><td>${ldca.toExponential(2)}</td><td>${dac.toExponential(2)}</td></tr>`;
+  });
+  document.getElementById('ldca-table').innerHTML=html;
+})();
+
+function updateDAC(){}
+
+function calcDAC(){
+  const nk=document.getElementById('dac-nuc').value;
+  if(!nk||!DAC_DB[nk])return;
+  const meas=+document.getElementById('dac-meas').value;
+  const dur=+document.getElementById('dac-dur').value;
+  const breath=+document.getElementById('dac-breath').value;
+  const d=DAC_DB[nk];
+  const ldca=calcLDCA(d.e50);
+  const dac=calcDACval(d.e50);
+  const ratio_ldca=meas/ldca;
+  const ratio_dac=meas/dac;
+  
+  // Dose annuelle si exposition dur h/j, 250 j/an
+  const annual_intake=meas*breath*dur*250; // Bq
+  const annual_dose=annual_intake*d.e50*1000; // mSv
+  
+  let status,cls,details;
+  if(meas<=ldca){status='✅ Inférieur à la LDCA (public)';cls='alert-green';details='Concentration acceptable. Pas de protection respiratoire nécessaire.'}
+  else if(meas<=dac){status='⚠️ Entre LDCA et DAC (travailleur)';cls='alert-orange';details='Concentration admissible pour un travailleur classé. Surveillance renforcée recommandée. Évaluer le besoin d\'EPI respiratoire.'}
+  else{status='🚨 Au-dessus de la DAC';cls='alert-red';details='Concentration INACCEPTABLE sans protection respiratoire. Port d\'APR obligatoire (facteur de protection adapté). Investiguer la source. Ventilation/confinement.'}
+  
+  const apr_needed=meas>dac?Math.ceil(meas/dac):0;
+  
+  document.getElementById('dac-result').innerHTML=`<div class="result-box ${cls}">
+    <b>${d.name} (${nk})</b><br>
+    Activité mesurée : <b>${meas.toExponential(2)} Bq/m³</b><br>
+    LDCA (public) : ${ldca.toExponential(2)} Bq/m³ — Ratio : <b>${ratio_ldca.toFixed(2)}×</b><br>
+    DAC (travailleur) : ${dac.toExponential(2)} Bq/m³ — Ratio : <b>${ratio_dac.toFixed(2)}×</b><br>
+    Dose annuelle estimée (${dur}h/j, 250j) : <b>${annual_dose.toFixed(3)} mSv</b><br>
+    ${apr_needed>0?`Facteur de protection APR minimum requis : <b>FP ≥ ${apr_needed}</b><br>`:''}
+    <br><b>${status}</b><br>${details}
+  </div>`;
+}
+
+// ═══ SURFACE CONTAMINATION ═══
+function calcSurf(){
+  const type=document.getElementById('surf-type').value;
+  const act=+document.getElementById('surf-act').value;
+  const area=+document.getElementById('surf-area').value;
+  const eff=+document.getElementById('surf-eff').value/100;
+  const emit=document.getElementById('surf-emit').value;
+  
+  let bqcm2;
+  if(type==='direct'){bqcm2=act/(eff*area)} // cps → Bq/cm²
+  else{bqcm2=act/(0.1*area)} // frottis : 10% transféré
+  
+  const limits={bg:{lib:4,inv:0.4,action:10},a:{lib:0.4,inv:0.04,action:1},act:{lib:0.04,inv:0.004,action:0.1}};
+  const lim=limits[emit];
+  
+  let status,cls;
+  if(bqcm2>lim.action){status='🚨 DÉPASSEMENT — Action immédiate requise';cls='alert-red'}
+  else if(bqcm2>lim.lib){status='⚠️ Au-dessus du seuil de libération';cls='alert-orange'}
+  else if(bqcm2>lim.inv){status='🔍 Niveau d\'investigation';cls='alert-orange'}
+  else{status='✅ Conforme — Sous le seuil d\'investigation';cls='alert-green'}
+  
+  document.getElementById('surf-result').innerHTML=`<div class="result-box ${cls}">
+    <b>Contamination surfacique :</b> ${bqcm2.toFixed(4)} Bq/cm²<br>
+    Seuil investigation : ${lim.inv} Bq/cm² — ${bqcm2>lim.inv?'<b style="color:var(--d)">DÉPASSÉ</b>':'OK'}<br>
+    Seuil libération : ${lim.lib} Bq/cm² — ${bqcm2>lim.lib?'<b style="color:var(--d)">DÉPASSÉ</b>':'OK'}<br>
+    Seuil action : ${lim.action} Bq/cm² — ${bqcm2>lim.action?'<b style="color:var(--d)">DÉPASSÉ</b>':'OK'}<br>
+    <br>${status}
+  </div>`;
+}
+
+// ═══ RADON ═══
+function calcRadon(){
+  const conc=+document.getElementById('rn-conc').value;
+  const dur=+document.getElementById('rn-dur').value;
+  const feq=+document.getElementById('rn-feq').value;
+  
+  // Dose = C × F × t × coefficient dose
+  // CIPR 65 : 1.1 mSv par WLM ≈ ~9e-6 mSv/(Bq·h/m³) pour EEC
+  // Simplification IRSN : dose (mSv) ≈ C(Bq/m³) × F × t(h) × 9e-6
+  const dose=conc*feq*dur*9e-6;
+  const seuil=300;
+  const ratio=conc/seuil;
+  
+  let status,cls;
+  if(conc>1000){status='🚨 Concentration très élevée — action urgente';cls='alert-red'}
+  else if(conc>seuil){status='⚠️ Dépassement du niveau de référence (300 Bq/m³)';cls='alert-orange'}
+  else if(conc>100){status='🔍 Niveau modéré — surveiller';cls='alert-orange'}
+  else{status='✅ Niveau acceptable';cls='alert-green'}
+  
+  let actions='';
+  if(conc>seuil){actions=`<br><b>Actions requises (R.4451-136) :</b><br>
+    • Mesurer en détail (dosimètres radon, détecteurs passifs 2 mois)<br>
+    • Renforcer la ventilation (VMC, aération naturelle)<br>
+    • Étanchéifier les points d'entrée (sol, joints, passages de canalisations)<br>
+    • Informer les travailleurs et le CSE<br>
+    • Intégrer au DUERP<br>
+    • Si >300 Bq/m³ après travaux correctifs : classer les travailleurs exposés`}
+  
+  document.getElementById('rn-result').innerHTML=`<div class="result-box ${cls}">
+    <b>Radon :</b> ${conc} Bq/m³ — ${ratio.toFixed(1)}× le niveau de référence<br>
+    Facteur d'équilibre F : ${feq}<br>
+    Durée d'exposition : ${dur} h/an<br>
+    <b>Dose annuelle estimée : ${dose.toFixed(2)} mSv</b><br>
+    <br>${status}${actions}
+  </div>`;
+}
+
+// ═══ ZONAGE ═══
+function calcZone(){
+  const debit=+document.getElementById('z-debit').value; // µSv/h
+  const temps=+document.getElementById('z-temps').value;
+  const dose_an=debit*temps/1000; // mSv/an
+  
+  let zone,zcls,color,obligations;
+  if(debit>=2000){zone='ZONE INTERDITE';zcls='z-interdit';color='Rouge';obligations=['Accès interdit sauf autorisation spéciale','Dispositif d\'alerte obligatoire','Limitation stricte du temps de séjour','Dosimétrie opérationnelle temps réel']}
+  else if(debit>=25){zone='ZONE CONTRÔLÉE spécialement réglementée';zcls='z-spec';color='Orange';obligations=['Accès restreint — autorisation PCR','Dosimétrie passive + opérationnelle','Catégorie A obligatoire','Signalisation spécifique + trèfle sur fond orange']}
+  else if(debit>=7.5){zone='ZONE CONTRÔLÉE';zcls='z-ctrl';color='Jaune';obligations=['Accès réservé aux travailleurs classés','Dosimétrie passive + opérationnelle recommandée','Signalisation + trèfle sur fond jaune','Contrôles d\'ambiance périodiques']}
+  else if(debit>=0.5){zone='ZONE SURVEILLÉE';zcls='z-surv';color='Bleu';obligations=['Signalisation (trèfle sur fond bleu)','Dosimétrie passive obligatoire','Accès limité aux travailleurs autorisés','Contrôle dosimétrique périodique']}
+  else{zone='ZONE NON RÉGLEMENTÉE';zcls='z-libre';color='—';obligations=['Pas de contrainte réglementaire spécifique','Suivi de routine']}
+  
+  document.getElementById('z-result').innerHTML=`<div class="result-box" style="border-color:var(--bd)">
+    <span class="zone-badge ${zcls}">${zone}</span><br><br>
+    Débit de dose ambiant : <b>${debit} µSv/h</b><br>
+    Dose annuelle estimée (${temps}h) : <b>${dose_an.toFixed(2)} mSv</b><br>
+    Couleur de signalisation : <b>${color}</b><br>
+    <br><b>Obligations :</b><br>${obligations.map(o=>'• '+o).join('<br>')}
+  </div>`;
+}
+</script>
+</body>
+</html>
