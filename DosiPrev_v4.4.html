@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DosiPrev v3.1 — Dosimétrie Interne</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#38bdf8;--ad:rgba(56,189,248,.12);--w:#f59e0b;--d:#ef4444;--g:#22c55e;--p:#a78bfa;--tl:#2dd4bf;--r:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f5f9;--s:#fff;--s2:#e8edf4;--s3:#dce3ed;--bd:#c5cdd8;--t:#1e293b;--tm:#64748b;--a:#0284c7;--ad:rgba(2,132,199,.1);--w:#d97706;--d:#dc2626;--g:#16a34a;--p:#7c3aed;--tl:#0d9488}}
+:root[data-theme="dark"]{--bg:#0b0f16;--s:#111827;--s2:#1a2234;--s3:#222d42;--bd:#2a3550;--t:#e2e8f0;--tm:#7b8ba3;--a:#38bdf8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-padding-top:env(safe-area-inset-top,0)}html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden}
+.app{max-width:1140px;margin:0 auto;padding:16px 14px 60px}
+header{text-align:center;padding:20px 0 16px;border-bottom:1px solid var(--bd);margin-bottom:16px}
+header h1{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;color:var(--a)}
+header .sub{color:var(--tm);font-size:.75rem;margin-top:3px}
+.badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--ad);color:var(--a);margin-top:5px;font-family:'JetBrains Mono',monospace}
+.disc{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);padding:10px 12px;font-size:.7rem;line-height:1.7;color:var(--w);margin-bottom:14px}
+.tabs{display:flex;gap:2px;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;min-width:0;padding:7px 5px;border:none;background:0;color:var(--tm);font-family:inherit;font-size:.65rem;font-weight:500;cursor:pointer;border-radius:5px;transition:.2s;white-space:nowrap}
+.tab.active{background:var(--a);color:#fff}.tab:hover:not(.active){background:var(--s2);color:var(--t)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--a);display:flex;align-items:center;gap:5px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:600px){.fg{grid-template-columns:1fr}}
+.fm{display:flex;flex-direction:column;gap:3px}.fm.full{grid-column:1/-1}
+label{font-size:.68rem;font-weight:500;color:var(--tm)}
+select,input[type="number"],input[type="text"],input[type="date"]{padding:7px 9px;border:1px solid var(--bd);border-radius:5px;background:var(--s2);color:var(--t);font-family:inherit;font-size:.78rem;outline:0;transition:.2s}
+select:focus,input:focus{border-color:var(--a)}
+.btn{padding:7px 14px;border:none;border-radius:5px;font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s}
+.bp{background:var(--a);color:#fff}.bp:hover{opacity:.88}
+.bs{background:var(--s2);color:var(--t);border:1px solid var(--bd)}
+.bsm{padding:5px 9px;font-size:.68rem}
+.actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.dv{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:700;text-align:center;padding:12px}
+.du{font-size:.78rem;color:var(--tm);font-weight:400}
+.sb{height:6px;border-radius:3px;background:var(--s3);margin:8px 0;overflow:hidden}
+.sbf{height:100%;border-radius:3px;transition:width .5s}
+table{width:100%;border-collapse:collapse;font-size:.73rem;margin-top:8px}
+th,td{padding:5px 7px;text-align:left;border-bottom:1px solid var(--bd)}
+th{color:var(--tm);font-weight:500;font-size:.63rem;text-transform:uppercase;letter-spacing:.04em}
+td{font-family:'JetBrains Mono',monospace;font-size:.71rem}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.63rem;font-weight:600}
+.tg{background:rgba(34,197,94,.14);color:var(--g)}.to{background:rgba(245,158,11,.14);color:var(--w)}.tr{background:rgba(239,68,68,.14);color:var(--d)}
+.tp{background:rgba(167,139,250,.14);color:var(--p)}.tt{background:rgba(45,212,191,.14);color:var(--tl)}
+.ib{padding:9px 12px;border-left:3px solid var(--a);background:var(--ad);border-radius:0 5px 5px 0;font-size:.73rem;line-height:1.7;margin-top:9px}
+.nl{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.nc{display:flex;align-items:center;gap:4px;padding:3px 8px;background:var(--s2);border:1px solid var(--bd);border-radius:99px;font-size:.68rem;font-family:'JetBrains Mono',monospace}
+.nc .x{cursor:pointer;color:var(--d);font-weight:700;font-size:.78rem}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.tc{grid-template-columns:1fr}}
+.kpi{text-align:center;padding:9px}.kv{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700}.kl{font-size:.63rem;color:var(--tm);margin-top:2px}
+.br{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.bl{width:68px;font-size:.66rem;text-align:right;color:var(--tm);flex-shrink:0}
+.bt{flex:1;height:16px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;font-size:.58rem;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace;transition:width .5s}
+.footer{text-align:center;padding:16px 0;font-size:.62rem;color:var(--tm);border-top:1px solid var(--bd);margin-top:24px;line-height:1.8}
+.hidden{display:none!important}
+.chk-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:6px}
+@media(max-width:500px){.chk-grid{grid-template-columns:1fr}}
+.chk-item{display:flex;align-items:center;gap:6px;font-size:.73rem;padding:4px 0;cursor:pointer}
+.chk-item input{accent-color:var(--a);width:15px;height:15px;cursor:pointer}
+.organ-bar{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.organ-label{width:90px;font-size:.66rem;text-align:right;color:var(--tm);flex-shrink:0}
+.organ-track{flex:1;height:14px;background:var(--s3);border-radius:3px;overflow:hidden;position:relative}
+.organ-fill{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:3px;font-size:.55rem;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace}
+.wt-badge{font-size:.55rem;color:var(--tm);font-family:'JetBrains Mono',monospace;width:36px;text-align:left;flex-shrink:0}
+.risk-score{font-size:2rem;font-weight:800;text-align:center;padding:8px}
+.risk-bar{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--g),var(--w),var(--d));position:relative;margin:8px 0}
+.risk-marker{position:absolute;top:-4px;width:4px;height:18px;background:var(--t);border-radius:2px;transition:left .5s}
+@media print{body{background:#fff!important;color:#000!important;font-size:9pt}.tabs,.disc,.actions,.btn,.nc .x,.tab,.footer{display:none!important}.panel{display:block!important}.card{border:1px solid #ccc;break-inside:avoid;background:#fff!important}.hidden{display:block!important}.print-only{display:block!important}@page{margin:12mm;size:A4}}
+.print-only{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>☢️ DosiPrev <small style="font-weight:400;font-size:.6em;color:var(--tm)">v4.4</small></h1>
+  <div class="sub">Dosimétrie Interne — OIR + Bi-exponentiel • Validé MIODOSE</div>
+  <div class="badge">34 nucléides • OIR (CIPR 130-141) • Rétention bi-exp • Auto-test MIODOSE</div>
+</header>
+<div class="disc">⚠️ <b>Outil d'aide à la décision.</b> Résultats à confirmer par calcul dosimétrique de référence (MIODOSE, IMBA). Ne constitue pas une expertise réglementaire au sens de l'arrêté du 17/07/2013.</div>
+
+<div class="card" style="padding:8px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+  <span style="font-size:.72rem;font-weight:600;color:var(--a)">⚙️ Modèle dosimétrique :</span>
+  <select id="modelSel" onchange="onModelChange()" style="font-size:.72rem;padding:4px 8px">
+    <option value="oir" selected>OIR (CIPR 130-141, 2015-2019) — recommandé</option>
+    <option value="p68">Publication 68 (CIPR, 1994) — historique</option>
+  </select>
+  <select id="retModel" onchange="onModelChange()" style="font-size:.72rem;padding:4px 8px">
+    <option value="biexp" selected>Rétention bi-exponentielle — recommandé</option>
+    <option value="mono">Rétention mono-exponentielle — simplifié</option>
+  </select>
+  <span id="modelBadge" class="badge" style="font-size:.55rem">OIR + bi-exp</span>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="sT('calc',this)">💊 Dose</button>
+  <button class="tab" onclick="sT('chain',this)">🔗 Filiation</button>
+  <button class="tab" onclick="sT('multi',this)">⚛️ Multi</button>
+  <button class="tab" onclick="sT('fit',this)">📈 Fit</button>
+  <button class="tab" onclick="sT('patient',this)">🧬 Patient</button>
+  <button class="tab" onclick="sT('urine',this)">🧪 Excrétion</button>
+  <button class="tab" onclick="sT('dtpa',this)">💉 DTPA</button>
+  <button class="tab" onclick="sT('dmd',this)">🎯 DMD</button>
+  <button class="tab" onclick="sT('chronic',this)">🏭 Chron.</button>
+  <button class="tab" onclick="sT('wt',this)">🫀 wT</button>
+  <button class="tab" onclick="sT('ref',this)">📚 Réf.</button>
+</div>
+
+<!-- ═══ TAB: DOSE ═══ -->
+<div id="tab-calc" class="panel active">
+  <div class="card"><h2>🔬 Paramètres d'exposition</h2>
+    <div class="fg">
+      <div class="fm"><label>Radionucléide</label><select id="nuclide" onchange="oNC('nuclide','absType')"></select></div>
+      <div class="fm"><label>Voie</label><select id="pathway" onchange="oPW()"><option value="inh">Inhalation</option><option value="ing">Ingestion</option><option value="wound">Plaie contaminée</option><option value="skin">Transcutanée (peau intacte)</option><option value="mucous">Muqueuse (yeux, nez, bouche)</option></select></div>
+      <div class="fm" id="ag"><label>DAMA</label><select id="amad"><option value="5">5 μm</option><option value="1">1 μm</option></select></div>
+      <div class="fm" id="tg"><label>Type absorption</label><select id="absType"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option><option value="V">V (vapeur I₂)</option></select></div>
+      <div class="fm"><label>Activité (Bq)</label><input type="number" id="activity" value="1000" min="0" step="100"></div>
+      <div class="fm"><label>Date</label><input type="date" id="evDate"></div>
+      <div class="fm full"><label>Contexte</label><input type="text" id="ctx" placeholder="Incident gant percé — cellule chaude"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcS()">Calculer E(50)</button><button class="btn bs" onclick="resetS()">Reset</button><button class="btn bs" onclick="window.print()">🖨️</button></div>
+  </div>
+  <div id="sr" class="hidden"><div class="card"><h2>📊 Résultat</h2><div id="src"></div></div></div>
+</div>
+
+<!-- ═══ TAB: FILIATION / DECAY CHAINS ═══ -->
+<div id="tab-chain" class="panel">
+  <div class="card">
+    <h2>🔗 Chaînes de filiation radioactive — Dose totale</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Un radionucléide parent se désintègre en une chaîne de descendants. Chacun irradie des organes différents. La dose réelle = somme de toute la chaîne.</p>
+    <div class="fg">
+      <div class="fm"><label>Chaîne de filiation</label>
+        <select id="chain-sel" onchange="showChain()">
+          <option value="">— Sélectionner —</option>
+          <option value="U238">U-238 → Pb-206 (14 descendants)</option>
+          <option value="U235">U-235 → Pb-207 (11 descendants)</option>
+          <option value="Th232">Th-232 → Pb-208 (10 descendants)</option>
+          <option value="Np237">Np-237 → Bi-209 (transuraniens)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Activité initiale du parent (Bq)</label><input type="number" id="chain-act" value="1000" min="0"></div>
+      <div class="fm"><label>Équilibre de la chaîne</label>
+        <select id="chain-eq">
+          <option value="secular" selected>Équilibre séculaire (minerai brut, anciens)</option>
+          <option value="recent">Chaîne rompue (U enrichi, UF₆, récent)</option>
+          <option value="custom">Personnalisé</option>
+        </select>
+      </div>
+      <div class="fm"><label>Voie d'incorporation</label>
+        <select id="chain-pw"><option value="inh">Inhalation</option><option value="ing">Ingestion</option></select>
+      </div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcChain()">Calculer dose chaîne complète</button></div>
+  </div>
+
+  <div class="card">
+    <h2>⚗️ Mélanges uranium pré-configurés</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Sélectionnez un mélange isotopique → calcul automatique des activités et dose totale.</p>
+    <div class="fg">
+      <div class="fm"><label>Type d'uranium</label>
+        <select id="umix" onchange="showUmix()">
+          <option value="">— Sélectionner —</option>
+          <option value="nat">Uranium naturel (0.72% U-235)</option>
+          <option value="dep">Uranium appauvri (0.2% U-235)</option>
+          <option value="enr3">Uranium enrichi 3.5% (REP)</option>
+          <option value="enr20">Uranium enrichi 20% (recherche)</option>
+          <option value="enr93">Uranium enrichi 93% (militaire)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Masse incorporée (mg)</label><input type="number" id="umass" value="1" min="0" step="0.01"></div>
+      <div class="fm"><label>Voie</label><select id="umix-pw"><option value="inh">Inhalation</option><option value="ing">Ingestion</option></select></div>
+      <div class="fm"><label>Type absorption</label><select id="umix-t"><option value="M" selected>M (oxydes)</option><option value="F">F (UF₆, solubles)</option><option value="S">S (UO₂ céramique)</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcUmix()">Calculer dose mélange</button></div>
+  </div>
+
+  <div id="chain-visual" class="card hidden"><h2>⛓️ Schéma de filiation</h2><div id="chain-svg"></div></div>
+  <div id="chain-result" class="hidden"><div class="card"><h2>📊 Dose totale chaîne</h2><div id="chain-rc"></div></div></div>
+</div>
+
+<!-- ═══ TAB: MULTI ═══ -->
+<div id="tab-multi" class="panel">
+  <div class="card"><h2>⚛️ Multi-nucléides</h2>
+    <div class="fg">
+      <div class="fm"><label>Nucléide</label><select id="mn"></select></div>
+      <div class="fm"><label>Voie</label><select id="mp"><option value="inh">Inh</option><option value="ing">Ing</option><option value="wound">Plaie</option><option value="skin">Cutanée</option><option value="mucous">Muqueuse</option></select></div>
+      <div class="fm"><label>Type</label><select id="mt"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option></select></div>
+      <div class="fm"><label>Bq</label><input type="number" id="ma" value="500" min="0"></div>
+    </div>
+    <div class="actions"><button class="btn bp bsm" onclick="addN()">+ Ajouter</button></div>
+    <div id="ml" class="nl"></div>
+    <div class="actions"><button class="btn bp" onclick="calcM()">Dose totale</button><button class="btn bs" onclick="clrM()">Effacer</button></div>
+  </div>
+  <div id="mr" class="hidden"><div class="card"><h2>📊 Total</h2><div id="mrc"></div></div></div>
+</div>
+
+<!-- ═══ TAB: PATIENT / RADIOSENSIBILITÉ ═══ -->
+<div id="tab-patient" class="panel">
+  <div class="card">
+    <h2>🧬 Profil de radiosensibilité du travailleur</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:10px;">Cochez les facteurs de risque présents. Le score de radiosensibilité ajuste l'interprétation dosimétrique et les recommandations de suivi.</p>
+    
+    <div style="font-size:.73rem;font-weight:600;color:var(--a);margin:10px 0 4px;">Facteurs génétiques / constitutionnels</div>
+    <div class="chk-grid">
+      <label class="chk-item"><input type="checkbox" data-rs="3" data-cat="gen" onchange="calcRS()"> Ataxie-télangiectasie (ATM)</label>
+      <label class="chk-item"><input type="checkbox" data-rs="3" data-cat="gen" onchange="calcRS()"> Syndrome de Li-Fraumeni (TP53)</label>
+      <label class="chk-item"><input type="checkbox" data-rs="3" data-cat="gen" onchange="calcRS()"> Xeroderma pigmentosum</label>
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="gen" onchange="calcRS()"> Syndrome de Bloom</label>
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="gen" onchange="calcRS()"> Anémie de Fanconi</label>
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="gen" onchange="calcRS()"> Syndrome de Cockayne</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="gen" onchange="calcRS()"> BRCA1/BRCA2 muté</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="gen" onchange="calcRS()"> Rétinoblastome héréditaire (RB1)</label>
+    </div>
+
+    <div style="font-size:.73rem;font-weight:600;color:var(--a);margin:14px 0 4px;">Antécédents médicaux</div>
+    <div class="chk-grid">
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="med" onchange="calcRS()"> Radiothérapie antérieure</label>
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="med" onchange="calcRS()"> Chimiothérapie antérieure</label>
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="med" onchange="calcRS()"> Greffe de moelle / CSH</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Maladie auto-immune (lupus, PR...)</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Immunodépression / VIH</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Pathologie thyroïdienne (I-131↑)</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Insuffisance rénale (U, Sr↑)</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Pathologie hépatique chronique</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Aplasie / cytopénie connue</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="med" onchange="calcRS()"> Antécédent de cancer</label>
+    </div>
+
+    <div style="font-size:.73rem;font-weight:600;color:var(--a);margin:14px 0 4px;">Facteurs physiologiques</div>
+    <div class="chk-grid">
+      <label class="chk-item"><input type="checkbox" data-rs="3" data-cat="phy" onchange="calcRS()"> Grossesse en cours</label>
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="phy" onchange="calcRS()"> Allaitement</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="phy" onchange="calcRS()"> Âge &lt; 18 ans</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="phy" onchange="calcRS()"> Âge &gt; 65 ans</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="phy" onchange="calcRS()"> Tabagisme actif (poumons↑)</label>
+    </div>
+
+    <div style="font-size:.73rem;font-weight:600;color:var(--a);margin:14px 0 4px;">Expositions antérieures</div>
+    <div class="chk-grid">
+      <label class="chk-item"><input type="checkbox" data-rs="2" data-cat="exp" onchange="calcRS()"> Dose cumulée vie &gt; 100 mSv</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="exp" onchange="calcRS()"> Dose cumulée vie &gt; 50 mSv</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="exp" onchange="calcRS()"> Contamination interne antérieure</label>
+      <label class="chk-item"><input type="checkbox" data-rs="1" data-cat="exp" onchange="calcRS()"> Exposition professionnelle &gt; 10 ans</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Score de radiosensibilité</h2>
+    <div id="rs-result">
+      <div class="risk-score" id="rs-score" style="color:var(--g)">0</div>
+      <div style="text-align:center;font-size:.7rem;color:var(--tm)">Score sur 30</div>
+      <div class="risk-bar"><div class="risk-marker" id="rs-marker" style="left:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--tm)"><span>Normal</span><span>Modéré</span><span>Élevé</span><span>Très élevé</span></div>
+      <div id="rs-interp" class="ib" style="margin-top:10px">Aucun facteur de risque identifié. Radiosensibilité standard.</div>
+      <div id="rs-reco" class="hidden"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: EXCRETION ═══ -->
+<div id="tab-urine" class="panel">
+  <div class="card"><h2>🧪 Excrétion urinaire</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px;">Estimation d'incorporation à partir d'urines 24h (CIPR 78 simplifié).</p>
+    <div class="fg">
+      <div class="fm"><label>Nucléide</label><select id="un" onchange="oNC('un','ut')"></select></div>
+      <div class="fm"><label>Voie</label><select id="upw"><option value="inh">Inh</option><option value="ing">Ing</option><option value="wound">Plaie</option></select></div>
+      <div class="fm"><label>Type</label><select id="ut"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option></select></div>
+      <div class="fm"><label>Activité 24h (Bq/j)</label><input type="number" id="ua" value="10" min="0" step="0.1"></div>
+      <div class="fm"><label>Jours post-incorp.</label><input type="number" id="ud" value="3" min="1"></div>
+      <div class="fm"><label>DTPA en cours ?</label><select id="udtpa"><option value="0">Non</option><option value="1">Oui</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcU()">Estimer</button></div>
+  </div>
+  <div id="ur" class="hidden"><div class="card"><h2>📋 Résultat</h2><div id="urc"></div></div></div>
+</div>
+
+<!-- ═══ TAB: DTPA ═══ -->
+<div id="tab-dtpa" class="panel">
+  <div class="card"><h2>💉 Traitement DTPA</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px;">Réduction de dose par chélation (actinides). Modèle NCRP 161 simplifié.</p>
+    <div class="fg">
+      <div class="fm"><label>Actinide</label><select id="dn"><option value="Pu-238">Pu-238</option><option value="Pu-239" selected>Pu-239</option><option value="Am-241">Am-241</option><option value="Cm-244">Cm-244</option><option value="Cf-252">Cf-252</option><option value="Np-237">Np-237</option></select></div>
+      <div class="fm"><label>Voie</label><select id="dpw"><option value="inh">Inh</option><option value="wound">Plaie</option></select></div>
+      <div class="fm"><label>Activité (Bq)</label><input type="number" id="da" value="1000" min="0"></div>
+      <div class="fm"><label>Délai 1er DTPA (h)</label><input type="number" id="dh" value="2" min="0" max="720"></div>
+      <div class="fm"><label>Nb injections</label><input type="number" id="dni" value="5" min="1" max="60"></div>
+      <div class="fm"><label>Type initial</label><select id="dty"><option value="Ca">Ca-DTPA</option><option value="Zn">Zn-DTPA</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcD()">Calculer</button></div>
+  </div>
+  <div id="dr" class="hidden"><div class="card"><h2>📋 Résultat DTPA</h2><div id="drc"></div></div></div>
+</div>
+
+<!-- ═══ TAB: CHRONIC ═══ -->
+<div id="tab-chronic" class="panel">
+  <div class="card">
+    <h2>🏭 Contamination atmosphérique chronique</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px;">Calcul d'incorporation par inhalation prolongée. Intake = Concentration × Débit respiratoire × Durée.</p>
+    <div class="fg">
+      <div class="fm"><label>Nucléide</label><select id="cn" onchange="oNC('cn','ct')"></select></div>
+      <div class="fm"><label>Type absorption</label><select id="ct"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option></select></div>
+      <div class="fm"><label>Concentration air (Bq/m³)</label><input type="number" id="cconc" value="10" min="0" step="0.1"></div>
+      <div class="fm"><label>Durée d'exposition (heures)</label><input type="number" id="cdur" value="8" min="0" step="0.5"></div>
+      <div class="fm"><label>Débit respiratoire (m³/h)</label>
+        <select id="crate">
+          <option value="1.2" selected>1,2 m³/h (travail léger — CIPR 66)</option>
+          <option value="1.5">1,5 m³/h (travail modéré)</option>
+          <option value="2.5">2,5 m³/h (travail lourd)</option>
+          <option value="0.45">0,45 m³/h (repos / sommeil)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Scénario</label>
+        <select onchange="fillChronic(this.value)">
+          <option value="">— Personnalisé —</option>
+          <option value="cnpe8">Poste 8h — zone contrôlée CNPE</option>
+          <option value="cnpe4">Intervention 4h — arrêt tranche</option>
+          <option value="labo">Labo recherche — 8h</option>
+          <option value="demantel">Démantèlement — 6h travail lourd</option>
+          <option value="incident">Incident — 30 min forte concentration</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcChronic()">Calculer</button></div>
+  </div>
+  <div class="card">
+    <h2>🧴 Contamination surfacique cutanée</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px;">Estimation de dose par contact cutané prolongé. Intake = Activité surfacique × Surface × Fraction absorption × (1 - e<sup>-λt</sup>).</p>
+    <div class="fg">
+      <div class="fm"><label>Nucléide</label><select id="skn" onchange="oNC('skn','skt')"></select></div>
+      <div class="fm"><label>Activité surfacique (Bq/cm²)</label><input type="number" id="skact" value="100" min="0"></div>
+      <div class="fm"><label>Surface exposée (cm²)</label>
+        <select id="sksrf">
+          <option value="30">30 cm² (paume main)</option>
+          <option value="100">100 cm² (avant-bras)</option>
+          <option value="300">300 cm² (bras entier)</option>
+          <option value="500">500 cm² (visage+cou)</option>
+          <option value="1500">1500 cm² (torse)</option>
+        </select>
+      </div>
+      <div class="fm"><label>Durée avant décontamination (min)</label><input type="number" id="skdur" value="30" min="1" max="1440"></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcSkin()">Calculer</button></div>
+  </div>
+  <div id="cr" class="hidden"><div class="card"><h2>📋 Résultat</h2><div id="crc"></div></div></div>
+</div>
+
+<!-- ═══ TAB: FIT MULTI-MESURES ═══ -->
+<div id="tab-fit" class="panel">
+  <div class="card">
+    <h2>📈 Ajustement multi-mesures — Estimation d'incorporation</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Entrez plusieurs mesures (urines, selles, anthropo) à des dates différentes. L'algorithme ajuste l'incorporation par moindres carrés pondérés : I = Σ(Mi×fi/σi²) / Σ(fi²/σi²).</p>
+    <div class="ib" style="margin-bottom:8px;border-color:var(--w)">⚠️ <b>Ajustement mono-incorporation.</b> Toutes les mesures sont rapportées à une seule incorporation aiguë à J0. En cas d'incorporations multiples (surveillance de routine), traiter chaque intervalle de surveillance séparément.</div>
+    <div class="fg">
+      <div class="fm"><label>Radionucléide</label><select id="fn" onchange="oNC('fn','ft')"></select></div>
+      <div class="fm"><label>Voie d'entrée supposée</label><select id="fpw"><option value="inh">Inhalation</option><option value="ing">Ingestion</option><option value="wound">Plaie</option></select></div>
+      <div class="fm"><label>Type absorption</label><select id="ft"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option><option value="V">V (vapeur I₂)</option></select></div>
+      <div class="fm"><label>Tester tous les types F/M/S ?</label><select id="fall"><option value="0">Non — type sélectionné</option><option value="1">Oui — meilleur fit</option></select></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>➕ Ajouter une mesure</h2>
+    <div class="fg">
+      <div class="fm"><label>Type de mesure</label>
+        <select id="fmtype"><option value="urine">Urine 24h (Bq/j)</option><option value="feces">Selles 24h (Bq/j)</option><option value="whole">Anthropo corps entier (Bq)</option><option value="thyroid">Anthropo thyroïde (Bq)</option><option value="lung">Anthropo poumons (Bq)</option></select>
+      </div>
+      <div class="fm"><label>Jour post-incorporation</label><input type="number" id="fmday" value="3" min="0" max="10000"></div>
+      <div class="fm"><label>Activité mesurée</label><input type="number" id="fmval" value="10" min="0" step="0.01"></div>
+      <div class="fm"><label>Incertitude (SF — Scattering Factor)</label><input type="number" id="fmsf" value="1.4" min="1" max="10" step="0.1"><span style="font-size:.6rem;color:var(--tm)">1.4 = défaut CIPR 78. 3 = variabilité selles.</span></div>
+    </div>
+    <div class="actions"><button class="btn bp bsm" onclick="addFitM()">+ Ajouter mesure</button></div>
+    <div id="fit-list" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="actions"><button class="btn bp" onclick="calcFit()">Ajuster — Estimer incorporation</button><button class="btn bs" onclick="clearFit()">Effacer</button><button class="btn bs" onclick="window.print()">🖨️</button></div>
+  </div>
+  <div id="fr" class="hidden">
+    <div class="card"><h2>📊 Résultat de l'ajustement</h2><div id="frc"></div></div>
+    <div class="card"><h2>📉 Courbe de rétention/excrétion vs mesures</h2><div id="fit-chart"></div></div>
+  </div>
+</div>
+
+<!-- ═══ TAB: DMD ═══ -->
+<div id="tab-dmd" class="panel">
+  <div class="card">
+    <h2>🎯 Dose Minimale Détectable (DMD)</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">La DMD est la dose maximale que l'on peut recevoir sans qu'elle soit détectée par le programme de surveillance. DMD = max[LD / f(t)] × e(50) pour t ∈ [0, intervalle].</p>
+    <div class="fg">
+      <div class="fm"><label>Radionucléide</label><select id="dmdn" onchange="oNC('dmdn','dmdt')"></select></div>
+      <div class="fm"><label>Type absorption</label><select id="dmdt"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option></select></div>
+      <div class="fm"><label>Type de mesure</label>
+        <select id="dmdm"><option value="urine">Urine 24h</option><option value="feces">Selles 24h</option><option value="whole">Anthropo corps entier</option><option value="thyroid">Anthropo thyroïde</option></select>
+      </div>
+      <div class="fm"><label>Limite de détection (Bq ou Bq/j)</label><input type="number" id="dmdld" value="1" min="0.001" step="0.1"></div>
+      <div class="fm"><label>Intervalle de surveillance (jours)</label>
+        <select id="dmdi"><option value="30">Mensuel (30 j)</option><option value="90">Trimestriel (90 j)</option><option value="180" selected>Semestriel (180 j)</option><option value="365">Annuel (365 j)</option><option value="14">Bimensuel (14 j)</option><option value="7">Hebdomadaire (7 j)</option></select>
+      </div>
+      <div class="fm"><label>Voie d'incorporation</label><select id="dmdpw"><option value="inh">Inhalation</option><option value="ing">Ingestion</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="calcDMD()">Calculer DMD</button></div>
+  </div>
+  <div class="card">
+    <h2>🔄 Comparaison de programmes</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Comparer automatiquement urines, selles et anthropo à différents intervalles.</p>
+    <div class="fg">
+      <div class="fm"><label>Nucléide</label><select id="dmdcn" onchange="oNC('dmdcn','dmdct')"></select></div>
+      <div class="fm"><label>Type</label><select id="dmdct"><option value="">Auto</option><option value="F">F</option><option value="M">M</option><option value="S">S</option></select></div>
+    </div>
+    <div class="actions"><button class="btn bp" onclick="compareDMD()">Comparer programmes</button></div>
+  </div>
+  <div id="dmdr" class="hidden"><div class="card"><h2>📋 Résultat DMD</h2><div id="dmdrc"></div></div></div>
+</div>
+
+<!-- ═══ TAB: wT / ORGANES ═══ -->
+<div id="tab-wt" class="panel">
+  <div class="card">
+    <h2>🫀 Facteurs de pondération tissulaire wT — CIPR 103 (2007)</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px;">La dose efficace E = Σ wT × HT. Les wT reflètent la sensibilité relative de chaque tissu aux effets stochastiques (cancers radio-induits).</p>
+    <div id="wt-chart"></div>
+    <table>
+      <thead><tr><th>Tissu / Organe</th><th>wT</th><th>Radiosensibilité</th><th>Cancers radio-induits</th></tr></thead>
+      <tbody id="wt-tbody"></tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>🎯 Tropisme organique par radionucléide</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px;">Organes cibles préférentiels — détermine où se concentre la dose.</p>
+    <div class="fm" style="max-width:280px;margin-bottom:8px"><label>Nucléide</label><select id="trop-nuc" onchange="showTrop()"></select></div>
+    <div id="trop-result"></div>
+  </div>
+  <div class="card">
+    <h2>⚡ Facteurs de pondération des rayonnements wR — CIPR 103</h2>
+    <table>
+      <thead><tr><th>Type de rayonnement</th><th>wR</th><th>Énergie</th></tr></thead>
+      <tbody>
+        <tr><td>Photons (γ, X)</td><td style="color:var(--g)">1</td><td>Toutes énergies</td></tr>
+        <tr><td>Électrons (β⁻, β⁺)</td><td style="color:var(--g)">1</td><td>Toutes énergies</td></tr>
+        <tr><td>Protons</td><td style="color:var(--w)">2</td><td>&gt; 2 MeV</td></tr>
+        <tr><td>Particules α</td><td style="color:var(--d)">20</td><td>—</td></tr>
+        <tr><td>Fragments de fission</td><td style="color:var(--d)">20</td><td>—</td></tr>
+        <tr><td>Neutrons</td><td style="color:var(--w)">2,5 à 20</td><td>Fonction continue de l'énergie</td></tr>
+      </tbody>
+    </table>
+    <div class="ib" style="margin-top:10px">
+      <b>Conséquence pratique :</b> 1 Bq de Pu-239 (émetteur α, wR=20) est 20× plus nocif par unité d'énergie déposée que 1 Bq de Cs-137 (émetteur β/γ, wR=1). C'est pourquoi les actinides ont des e(50) très élevés.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: REF ═══ -->
+<div id="tab-ref" class="panel">
+  <div class="card"><h2>📚 Base e(50) — <span id="nc"></span> nucléides</h2>
+    <div class="fm" style="max-width:240px;margin-bottom:8px"><label>Catégorie</label>
+      <select id="rf" onchange="bRef()"><option value="">Tous</option><option value="af">Activation/Fission</option><option value="pf">Produits fission</option><option value="pa">Actinides</option><option value="med">Médical</option><option value="cos">Naturel</option></select>
+    </div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Nucléide</th><th>T½</th><th>F</th><th>M</th><th>S</th><th>Ing.</th><th>Type</th><th>Organes cibles</th></tr></thead><tbody id="rtb"></tbody></table></div>
+  </div>
+  <div class="card"><h2>⚖️ Limites réglementaires</h2>
+    <div class="ib">
+      <b>Travailleurs :</b> 20 mSv/an (efficace) • 20 mSv/an (cristallin) • 500 mSv/an (peau, extrémités)<br>
+      <b>Public :</b> 1 mSv/an • <b>Femme enceinte :</b> 1 mSv sur la grossesse (dose fœtus)<br>
+      <b>Niveaux :</b> &gt;6 mSv → PCR+MdT • &gt;20 mSv → ESS ASN • &gt;100 mSv → urgence • &gt;500 mSv → vital
+    </div>
+  </div>
+  <div class="card">
+    <h2>🧪 Auto-test — Validation cas de référence MIODOSE</h2>
+    <p style="font-size:.73rem;color:var(--tm);margin-bottom:8px">Vérifie que DosiPrev reproduit les résultats de référence MIODOSE (AMTSN 2022) et les contrôles de cohérence CIPR 68.</p>
+    <div class="actions"><button class="btn bp" onclick="runAutoTest()">▶ Lancer les tests</button></div>
+    <div id="autotest-result"></div>
+  </div>
+</div> id="ph"><h2 style="text-align:center">☢️ DosiPrev — Rapport Dosimétrie Interne</h2><p style="text-align:center;font-size:9pt;color:#666" id="pd"></p></div>
+<footer class="footer">DosiPrev v4.4 — OIR + bi-exponentiel • Validé cas MIODOSE AMTSN 2022<br>PréventIA-LaB © 2026</footer>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// ICRP 103 TISSUE WEIGHTING FACTORS
+// ═══════════════════════════════════════════
+const WT=[
+  {o:"Moelle rouge",wt:.12,sens:"Très élevée",cancer:"Leucémies"},
+  {o:"Côlon",wt:.12,sens:"Très élevée",cancer:"Cancer colorectal"},
+  {o:"Poumons",wt:.12,sens:"Très élevée",cancer:"Cancer bronchopulmonaire"},
+  {o:"Estomac",wt:.12,sens:"Très élevée",cancer:"Cancer gastrique"},
+  {o:"Sein",wt:.12,sens:"Très élevée",cancer:"Cancer du sein"},
+  {o:"Reste*",wt:.12,sens:"Variable",cancer:"Divers"},
+  {o:"Gonades",wt:.08,sens:"Élevée",cancer:"Effets héréditaires"},
+  {o:"Vessie",wt:.04,sens:"Modérée",cancer:"Cancer vésical"},
+  {o:"Foie",wt:.04,sens:"Modérée",cancer:"Hépatocarcinome"},
+  {o:"Œsophage",wt:.04,sens:"Modérée",cancer:"Cancer œsophagien"},
+  {o:"Thyroïde",wt:.04,sens:"Modérée",cancer:"Cancer thyroïdien"},
+  {o:"Peau",wt:.01,sens:"Faible",cancer:"Cancer cutané (basocellulaire)"},
+  {o:"Surface osseuse",wt:.01,sens:"Faible",cancer:"Ostéosarcome"},
+  {o:"Cerveau",wt:.01,sens:"Faible",cancer:"Tumeurs SNC"},
+  {o:"Glandes salivaires",wt:.01,sens:"Faible",cancer:"Tumeurs salivaires"},
+];
+
+// ═══ ORGAN TROPISM PER NUCLIDE ═══
+const TROP={
+  "H-3":{org:[{n:"Corps entier",pct:100,note:"Distribution uniforme (eau tritiée)"}],ray:"β⁻ faible énergie",info:"Diffusion dans toute l'eau corporelle. T½ bio ~10 j."},
+  "C-14":{org:[{n:"Corps entier",pct:100,note:"Incorporation dans molécules organiques"}],ray:"β⁻",info:"S'intègre aux acides aminés, lipides, glucides."},
+  "Na-22":{org:[{n:"Corps entier",pct:70},{n:"Os",pct:30}],ray:"β⁺, γ",info:"Distribution similaire au sodium stable."},
+  "P-32":{org:[{n:"Os",pct:45},{n:"Moelle rouge",pct:30},{n:"Foie",pct:15},{n:"Rate",pct:10}],ray:"β⁻ haute énergie",info:"Ostéotrope. Accumulation dans les zones de croissance osseuse."},
+  "S-35":{org:[{n:"Corps entier",pct:60},{n:"Peau",pct:20},{n:"Os (cartilage)",pct:20}],ray:"β⁻",info:"Suit le métabolisme du soufre (acides aminés soufrés)."},
+  "Cr-51":{org:[{n:"Rate",pct:30},{n:"Moelle rouge",pct:25},{n:"Foie",pct:25},{n:"Reins",pct:20}],ray:"γ faible",info:"Marqueur des GR. Fixation modérée."},
+  "Mn-54":{org:[{n:"Foie",pct:40},{n:"Reins",pct:25},{n:"Os",pct:20},{n:"Pancréas",pct:15}],ray:"γ",info:"Hépatotrope. Cofacteur enzymatique."},
+  "Fe-59":{org:[{n:"Moelle rouge",pct:50},{n:"Foie",pct:20},{n:"Rate",pct:20},{n:"Os",pct:10}],ray:"β⁻, γ",info:"Métabolisme de l'hémoglobine. Hématotoxique."},
+  "Co-60":{org:[{n:"Foie",pct:35},{n:"Reins",pct:25},{n:"Os",pct:20},{n:"Rate",pct:20}],ray:"β⁻, γ haute énergie",info:"Irradiation γ intense. Hépatotrope modéré."},
+  "Zn-65":{org:[{n:"Foie",pct:30},{n:"Os",pct:25},{n:"Muscles",pct:25},{n:"Prostate",pct:20}],ray:"γ, β⁺",info:"Métabolisme du zinc. Large distribution."},
+  "Sr-90":{org:[{n:"Os",pct:70},{n:"Moelle rouge",pct:30}],ray:"β⁻ (+ Y-90 β⁻)",info:"⚠️ Analogue du calcium — fixation osseuse quasi-irréversible. T½ bio très long."},
+  "Zr-95":{org:[{n:"Os",pct:50},{n:"Foie",pct:30},{n:"Reins",pct:20}],ray:"β⁻, γ",info:"Ostéotrope modéré."},
+  "Nb-95":{org:[{n:"Os",pct:45},{n:"Foie",pct:30},{n:"Reins",pct:25}],ray:"β⁻, γ",info:"Fille du Zr-95. Tropisme similaire."},
+  "Ru-106":{org:[{n:"Reins",pct:35},{n:"Os",pct:30},{n:"Foie",pct:20},{n:"Rate",pct:15}],ray:"β⁻ (+ Rh-106 β⁻)",info:"Néphrotoxique. Rétention rénale."},
+  "Ag-110m":{org:[{n:"Foie",pct:50},{n:"Os",pct:25},{n:"Reins",pct:25}],ray:"γ, β⁻",info:"Forte fixation hépatique."},
+  "I-131":{org:[{n:"Thyroïde",pct:90},{n:"Estomac",pct:5},{n:"Glandes salivaires",pct:5}],ray:"β⁻, γ",info:"⚠️ Très thyréotrope (30% captation). Organe cible critique chez l'enfant."},
+  "I-125":{org:[{n:"Thyroïde",pct:90},{n:"Reins",pct:5},{n:"Rate",pct:5}],ray:"γ faible, EC",info:"Thyréotrope. T½ bio ~42 j thyroïde."},
+  "Cs-134":{org:[{n:"Muscles",pct:45},{n:"Corps entier",pct:40},{n:"Reins",pct:15}],ray:"β⁻, γ",info:"Analogue du potassium. Distribution musculaire prédominante."},
+  "Cs-137":{org:[{n:"Muscles",pct:45},{n:"Corps entier",pct:40},{n:"Reins",pct:15}],ray:"β⁻, γ (Ba-137m)",info:"Analogue du K. T½ bio ~70 j. Irradiation corps entier homogène."},
+  "Ce-144":{org:[{n:"Os",pct:40},{n:"Foie",pct:35},{n:"Poumons",pct:25}],ray:"β⁻, γ",info:"Rétention pulmonaire si inhalé (type M/S)."},
+  "Ir-192":{org:[{n:"Rate",pct:30},{n:"Foie",pct:30},{n:"Reins",pct:25},{n:"Os",pct:15}],ray:"β⁻, γ",info:"Utilisé en gammagraphie industrielle."},
+  "Ra-226":{org:[{n:"Os",pct:80},{n:"Moelle rouge",pct:20}],ray:"α, γ",info:"⚠️ Ostéotrope majeur (analogue Ca). Filiation α longue."},
+  "Th-232":{org:[{n:"Os",pct:45},{n:"Foie",pct:30},{n:"Poumons",pct:25}],ray:"α",info:"Rétention pulmonaire très longue si inhalé."},
+  "U-235":{org:[{n:"Reins",pct:40},{n:"Os",pct:35},{n:"Poumons",pct:25}],ray:"α, γ",info:"⚠️ Néphrotoxicité chimique ET radiologique."},
+  "U-238":{org:[{n:"Reins",pct:40},{n:"Os",pct:35},{n:"Poumons",pct:25}],ray:"α",info:"Néphrotoxicité chimique dominante. Toxicité rénale avant effet radio."},
+  "Np-237":{org:[{n:"Os",pct:45},{n:"Foie",pct:35},{n:"Poumons",pct:20}],ray:"α, γ",info:"Fixation osseuse. Chélatable par DTPA."},
+  "Pu-238":{org:[{n:"Os",pct:45},{n:"Foie",pct:35},{n:"Poumons",pct:20}],ray:"α",info:"⚠️ Émetteur α — très haute toxicité. Fixation osseuse quasi-irréversible. T½ bio ~200 ans (os)."},
+  "Pu-239":{org:[{n:"Os",pct:45},{n:"Foie",pct:35},{n:"Poumons",pct:20}],ray:"α",info:"⚠️ Émetteur α — e(50) parmi les plus élevés. Chélatable par DTPA si traité tôt."},
+  "Am-241":{org:[{n:"Os",pct:50},{n:"Foie",pct:30},{n:"Reins",pct:10},{n:"Poumons",pct:10}],ray:"α, γ",info:"Ostéotrope. Détectable en anthroporadiométrie (γ 59 keV)."},
+  "Cm-244":{org:[{n:"Os",pct:45},{n:"Foie",pct:35},{n:"Poumons",pct:20}],ray:"α",info:"Comportement similaire Am-241. Chélatable."},
+  "Cf-252":{org:[{n:"Os",pct:45},{n:"Foie",pct:35},{n:"Poumons",pct:20}],ray:"α, n (fission spontanée)",info:"Émetteur de neutrons. Double risque α + n."},
+  "Po-210":{org:[{n:"Foie",pct:30},{n:"Rate",pct:25},{n:"Reins",pct:25},{n:"Moelle rouge",pct:20}],ray:"α",info:"⚠️ Toxicité extrême par ingestion. 1 μg = dose létale."},
+  "Tc-99m":{org:[{n:"Reins",pct:30},{n:"Thyroïde",pct:20},{n:"Estomac",pct:20},{n:"Côlon",pct:30}],ray:"γ faible",info:"Traceur médical. T½ 6h. Dose négligeable."},
+  "F-18":{org:[{n:"Os",pct:40},{n:"Cerveau",pct:30},{n:"Vessie",pct:30}],ray:"β⁺, γ (ann.)",info:"Traceur TEP. Métabolisme du glucose (FDG)."},
+  "Ga-67":{org:[{n:"Foie",pct:30},{n:"Os",pct:25},{n:"Reins",pct:25},{n:"Rate",pct:20}],ray:"γ",info:"Scintigraphie. Tropisme inflammatoire et tumoral."},
+  "K-40":{org:[{n:"Muscles",pct:50},{n:"Corps entier",pct:50}],ray:"β⁻, γ",info:"Radioactivité naturelle corporelle (~4400 Bq chez adulte)."},
+};
+
+// ═══ NUCLIDE DATABASE ═══
+const DB={
+"H-3":{n:"Tritium",hl:"12,3 a",dt:"F",cat:"cos",oir:{F:2.0e-11,ing:1.9e-11},inh:{F:1.8e-11},ing:1.8e-11,w:1.8e-11,sk:1.0,mu:.8,ret:{whole:{bh:10}},exc:{F:.035},dtpa:0},
+"C-14":{n:"Carbone-14",hl:"5730 a",dt:"F",cat:"cos",oir:{F:1.1e-10,M:5.9e-10,S:6.8e-9,ing:1.6e-10},inh:{F:5.8e-10},ing:5.8e-10,w:5.8e-10,sk:.05,mu:.3,ret:{whole:{bh:40}},exc:{F:.025},dtpa:0},
+"Na-22":{n:"Sodium-22",hl:"2,6 a",dt:"F",cat:"af",oir:{F:2.4e-9,M:5.3e-9,S:2.2e-8,ing:3.5e-9},inh:{F:1.3e-9},ing:3.2e-9,w:3.2e-9,sk:.001,mu:.1,ret:{whole:{bh:11}},exc:{F:.08},dtpa:0},
+"P-32":{n:"Phosphore-32",hl:"14,3 j",dt:"M",cat:"af",oir:{F:1.3e-9,M:1.4e-9,S:1.5e-9,ing:1.7e-9},inh:{F:3.4e-10,M:8.0e-10},ing:2.4e-9,w:2.4e-9,sk:.001,mu:.15,ret:{whole:{bh:14}},exc:{F:.12,M:.06},dtpa:0},
+"S-35":{n:"Soufre-35",hl:"87,5 j",dt:"M",cat:"af",oir:{F:2.6e-11,M:3.1e-10,S:5.0e-10,ing:2.7e-11},inh:{F:5.3e-11,M:1.4e-9},ing:7.7e-10,w:7.7e-10,sk:.01,mu:.15,ret:{whole:{bh:44}},exc:{F:.04,M:.02},dtpa:0},
+"Cr-51":{n:"Chrome-51",hl:"27,7 j",dt:"M",cat:"af",oir:{F:2.8e-11,M:2.4e-11,S:2.8e-11,ing:1.3e-11},inh:{F:3.7e-11,M:3.4e-11},ing:3.8e-11,w:3.8e-11,sk:.001,mu:.05,ret:{whole:{bh:27}},exc:{F:.1,M:.05},dtpa:0},
+"Mn-54":{n:"Manganèse-54",hl:"312 j",dt:"M",cat:"af",oir:{F:1.1e-9,M:1.3e-9,S:2.8e-9,ing:5.0e-10},inh:{F:1.2e-9,M:1.8e-9},ing:7.1e-10,w:7.1e-10,sk:.001,mu:.08,ret:{whole:{bh:17}},exc:{F:.03,M:.015},dtpa:0},
+"Fe-59":{n:"Fer-59",hl:"44,5 j",dt:"M",cat:"af",oir:{F:5.6e-9,M:1.7e-9,S:1.7e-9,ing:1.7e-9},inh:{F:3.2e-9,M:4.0e-9},ing:1.8e-9,w:1.8e-9,sk:.001,mu:.05,ret:{whole:{bh:42}},exc:{F:.005,M:.003},dtpa:0},
+"Co-60":{n:"Cobalt-60",hl:"5,27 a",dt:"M",cat:"af",oir:{F:4.2e-9,M:6.2e-9,S:3.1e-8,ing:3.2e-9},inh:{F:9.6e-9,M:7.1e-9,S:1.7e-8},ing:3.4e-9,w:3.4e-9,sk:.001,mu:.05,ret:{whole:{bh:9.5}},exc:{F:.06,M:.02,S:.005},fec:{F:.01,M:.04,S:.1},chem:{F:"Composés organiques, halogénures",M:"Oxydes, hydroxydes",S:"Alliages, oxydes réfractaires"},dtpa:0,
+  biret:{whole:{F:{a1:.3,t1:1,a2:.7,t2:9.5},M:{a1:.45,t1:1.5,a2:.55,t2:9.5},S:{a1:.6,t1:2,a2:.4,t2:9.5}}}
+},
+"Zn-65":{n:"Zinc-65",hl:"244 j",dt:"M",cat:"af",oir:{F:3.8e-9,M:1.5e-9,S:1.7e-9,ing:4.3e-9},inh:{F:2.2e-9,M:2.9e-9,S:5.5e-9},ing:3.9e-9,w:3.9e-9,sk:.001,mu:.08,ret:{whole:{bh:244}},exc:{F:.015,M:.008},dtpa:0},
+"Ag-110m":{n:"Argent-110m",hl:"250 j",dt:"M",cat:"af",oir:{F:3.3e-9,M:5.0e-9,S:9.3e-9,ing:2.3e-9},inh:{F:1.1e-8,M:7.6e-9,S:2.3e-8},ing:2.8e-9,w:2.8e-9,sk:.001,mu:.05,ret:{whole:{bh:50}},exc:{F:.02,M:.01},dtpa:0},
+"Ir-192":{n:"Iridium-192",hl:"73,8 j",dt:"M",cat:"af",inh:{M:6.4e-9,S:1.4e-8},ing:1.4e-9,w:1.4e-9,sk:.001,mu:.05,ret:{whole:{bh:50}},exc:{M:.02},dtpa:0},
+"Sr-90":{n:"Strontium-90",hl:"28,8 a",dt:"M",cat:"pf",oir:{F:3.2e-8,M:1.8e-8,S:2.0e-7,ing:2.4e-8},inh:{F:3.0e-8,M:1.6e-7,S:7.7e-8},ing:2.8e-8,w:2.8e-8,sk:.001,mu:.05,ret:{whole:{bh:18000}},exc:{F:.012,M:.003,S:.001},fec:{F:.005,M:.04,S:.12},chem:{F:"SrCl₂, Sr(NO₃)₂",M:"SrTiO₃",S:"Non spécifié"},dtpa:0,
+  biret:{whole:{F:{a1:.3,t1:1,a2:.7,t2:18000},M:{a1:.45,t1:1.5,a2:.55,t2:18000},S:{a1:.6,t1:2,a2:.4,t2:18000}}}
+},
+"Zr-95":{n:"Zirconium-95",hl:"64 j",dt:"M",cat:"pf",oir:{F:2.9e-9,M:1.9e-9,S:2.6e-9,ing:3.2e-10},inh:{F:2.5e-9,M:5.9e-9,S:6.4e-9},ing:9.5e-10,w:9.5e-10,sk:.0001,mu:.03,ret:{whole:{bh:64}},exc:{M:.01},dtpa:0},
+"Nb-95":{n:"Niobium-95",hl:"35 j",dt:"M",cat:"pf",oir:{F:5.6e-10,M:6.9e-10,S:8.5e-10,ing:3.0e-10},inh:{M:1.8e-9,S:2.2e-9},ing:5.8e-10,w:5.8e-10,sk:.0001,mu:.03,ret:{whole:{bh:35}},exc:{M:.015},dtpa:0},
+"Ru-106":{n:"Ruthénium-106",hl:"374 j",dt:"M",cat:"pf",oir:{F:7.7e-9,M:1.3e-8,S:3.6e-8,ing:2.6e-9},inh:{F:6.6e-8,M:6.7e-8,S:1.2e-7},ing:7.0e-9,w:7.0e-9,sk:.001,mu:.05,ret:{whole:{bh:200}},exc:{F:.03,M:.005},dtpa:0},
+"I-131":{n:"Iode-131",hl:"8,02 j",dt:"F",cat:"pf",oir:{F:1.1e-8,M:2.7e-9,S:6.0e-10,V:1.7e-8,ing:1.7e-8},inh:{F:1.1e-8,V:2.0e-8},ing:2.2e-8,w:2.2e-8,sk:.08,mu:.3,ret:{thyroid:{bh:7.6,up:.3},whole:{bh:7.6}},exc:{F:.37,V:.37},fec:{F:.02,V:.02},chem:{F:"Aérosol, toutes formes particulaires",V:"Vapeur d'iode élémentaire I₂ (SR-1) — CIPR 68"},dtpa:0,
+  biret:{thyroid:{F:{a1:-.25,t1:.25,a2:.25,t2:7.6},V:{a1:-.25,t1:.25,a2:.25,t2:7.6}},whole:{F:{a1:.4,t1:.5,a2:.6,t2:7.6},V:{a1:.4,t1:.5,a2:.6,t2:7.6}}}
+},
+"I-125":{n:"Iode-125",hl:"59,4 j",dt:"F",cat:"med",oir:{F:8.6e-9,M:2.1e-9,S:3.0e-10,V:1.3e-8,ing:1.3e-8},inh:{F:5.1e-9},ing:1.5e-8,w:1.5e-8,sk:.08,mu:.3,ret:{thyroid:{bh:42,up:.3}},exc:{F:.15},dtpa:0},
+"Cs-134":{n:"Césium-134",hl:"2,06 a",dt:"F",cat:"pf",oir:{F:9.5e-9,M:6.0e-9,S:1.5e-8,ing:1.4e-8},inh:{F:9.6e-9,M:1.2e-8},ing:1.9e-8,w:1.9e-8,sk:.001,mu:.05,ret:{whole:{bh:70}},exc:{F:.01,M:.006},dtpa:0},
+"Cs-137":{n:"Césium-137",hl:"30,2 a",dt:"F",cat:"pf",oir:{F:9.3e-9,M:5.7e-9,S:5.1e-8,ing:1.4e-8},inh:{F:6.7e-9,M:9.7e-9},ing:1.3e-8,w:1.3e-8,sk:.001,mu:.05,ret:{whole:{bh:70}},exc:{F:.01,M:.006},fec:{F:.005,M:.01},chem:{F:"CsCl, tous composés solubles",M:"Particules vitrifiées, composés insolubles"},dtpa:0,
+  biret:{whole:{F:{a1:.38,t1:.8,a2:.62,t2:110},M:{a1:.45,t1:1,a2:.55,t2:110}}}
+},
+"Ce-144":{n:"Cérium-144",hl:"285 j",dt:"M",cat:"pf",oir:{F:9.9e-9,M:1.5e-8,S:2.7e-8,ing:9.8e-10},inh:{M:3.6e-8,S:5.3e-8},ing:5.2e-9,w:5.2e-9,sk:.0001,mu:.02,ret:{lung:{bh:500}},exc:{M:.002},dtpa:0},
+"Ra-226":{n:"Radium-226",hl:"1600 a",dt:"M",cat:"pa",oir:{F:1.6e-7,M:1.4e-6,S:1.3e-5,ing:1.3e-7},inh:{M:2.2e-6},ing:2.8e-7,w:2.8e-7,sk:.0001,mu:.03,ret:{whole:{bh:4500}},exc:{M:.0003},dtpa:0},
+"Th-232":{n:"Thorium-232",hl:"1,4×10¹⁰ a",dt:"M",cat:"pa",inh:{M:4.3e-5,S:2.5e-5},ing:2.3e-7,w:2.3e-7,sk:.0001,mu:.01,ret:{lung:{bh:700}},exc:{M:.0001},dtpa:0},
+"U-235":{n:"Uranium-235",hl:"7×10⁸ a",dt:"M",cat:"pa",oir:{F:2.3e-7,M:1.3e-6,S:1.2e-5,ing:3.2e-8},inh:{F:6.4e-7,M:2.7e-6,S:6.1e-6},ing:4.7e-8,w:4.7e-8,sk:.001,mu:.05,ret:{lung:{bh:500},whole:{bh:300}},exc:{F:.12,M:.003,S:.0005},dtpa:0},
+"U-238":{n:"Uranium-238",hl:"4,5×10⁹ a",dt:"M",cat:"pa",oir:{F:2.2e-7,M:1.2e-6,S:1.2e-5,ing:3.1e-8},inh:{F:5.8e-7,M:1.6e-6,S:5.7e-6},ing:4.5e-8,w:4.5e-8,sk:.001,mu:.05,ret:{lung:{bh:500},whole:{bh:300}},exc:{F:.12,M:.003,S:.0005},fec:{F:.01,M:.05,S:.14},chem:{F:"UF₆, UO₂F₂, uranyle nitrate",M:"UO₃, UF₄, UCl₄",S:"UO₂, U₃O₈"},dtpa:0,
+  biret:{whole:{M:{a1:.5,t1:2,a2:.5,t2:300},S:{a1:.65,t1:2,a2:.35,t2:300}},lung:{M:{a1:.3,t1:3,a2:.7,t2:500},S:{a1:.2,t1:5,a2:.8,t2:500}}}
+},
+"Np-237":{n:"Neptunium-237",hl:"2,14×10⁶ a",dt:"M",cat:"pa",inh:{M:2.1e-5},ing:1.1e-7,w:2.1e-5,sk:.0001,mu:.01,ret:{lung:{bh:700}},exc:{M:.0002},dtpa:1},
+"Pu-238":{n:"Plutonium-238",hl:"87,7 a",dt:"M",cat:"pa",inh:{M:4.6e-5,S:1.5e-5},ing:2.3e-7,w:4.6e-5,sk:.0001,mu:.005,ret:{lung:{bh:700},whole:{bh:20000}},exc:{M:.00015,S:.00004},fec:{M:.08,S:.15},chem:{M:"Oxydes, composés non spécifiés",S:"PuO₂ haute température"},dtpa:1,
+  biret:{whole:{M:{a1:.5,t1:2,a2:.5,t2:20000},S:{a1:.65,t1:3,a2:.35,t2:20000}},lung:{M:{a1:.25,t1:5,a2:.75,t2:700},S:{a1:.15,t1:8,a2:.85,t2:700}}}
+},
+"Pu-239":{n:"Plutonium-239",hl:"24110 a",dt:"M",cat:"pa",oir:{F:1.9e-5,M:1.4e-5,S:1.7e-5,ing:1.2e-7},inh:{M:3.2e-5,S:8.3e-6},ing:2.5e-7,w:5.0e-5,sk:.0001,mu:.005,ret:{lung:{bh:700},whole:{bh:20000}},exc:{M:.00015,S:.00004},fec:{M:.08,S:.15},chem:{F:null,M:"Oxydes, composés non spécifiés",S:"PuO₂ haute température"},dtpa:1,biret:{whole:{M:{a1:.5,t1:2,a2:.5,t2:20000},S:{a1:.65,t1:3,a2:.35,t2:20000}},lung:{M:{a1:.25,t1:5,a2:.75,t2:700},S:{a1:.15,t1:8,a2:.85,t2:700}}}},
+"Am-241":{n:"Américium-241",hl:"432 a",dt:"M",cat:"pa",inh:{M:2.7e-5},ing:2.0e-7,w:3.9e-5,sk:.0001,mu:.005,ret:{lung:{bh:700},whole:{bh:20000}},exc:{M:.0003},fec:{M:.06},chem:{M:"Oxydes, tous composés"},dtpa:1,biret:{whole:{M:{a1:.5,t1:2,a2:.5,t2:20000}},lung:{M:{a1:.25,t1:5,a2:.75,t2:700}}}},
+"Cm-244":{n:"Curium-244",hl:"18,1 a",dt:"M",cat:"pa",inh:{M:2.7e-5},ing:1.2e-7,w:2.7e-5,sk:.0001,mu:.005,ret:{lung:{bh:500}},exc:{M:.0004},dtpa:1},
+"Cf-252":{n:"Californium-252",hl:"2,65 a",dt:"M",cat:"pa",inh:{M:1.8e-5},ing:9.0e-8,w:1.8e-5,sk:.0001,mu:.005,ret:{lung:{bh:400}},exc:{M:.0005},dtpa:1},
+"Po-210":{n:"Polonium-210",hl:"138 j",dt:"M",cat:"cos",oir:{F:2.8e-7,M:1.1e-6,S:1.8e-6,ing:1.8e-7},inh:{F:2.5e-6,M:3.3e-6},ing:1.2e-6,w:1.2e-6,sk:.003,mu:.1,ret:{whole:{bh:50}},exc:{F:.005,M:.002},dtpa:0},
+"Tc-99m":{n:"Technétium-99m",hl:"6,01 h",dt:"F",cat:"med",oir:{F:8.6e-12,M:1.3e-11,S:1.3e-11,ing:1.4e-11},inh:{F:2.0e-11},ing:2.2e-11,w:2.2e-11,sk:.001,mu:.1,ret:{whole:{bh:.25}},exc:{F:.7},dtpa:0},
+"F-18":{n:"Fluor-18",hl:"1,83 h",dt:"F",cat:"med",oir:{F:3.1e-11,M:5.0e-11,S:5.1e-11,ing:4.8e-11},inh:{F:9.3e-11},ing:4.9e-11,w:4.9e-11,sk:.001,mu:.1,ret:{whole:{bh:.08}},exc:{F:.5},dtpa:0},
+"Ga-67":{n:"Gallium-67",hl:"3,26 j",dt:"F",cat:"med",oir:{F:5.5e-11,M:9.6e-11,S:1.1e-10,ing:5.4e-11},inh:{F:1.2e-10,M:2.8e-10},ing:1.9e-10,w:1.9e-10,sk:.001,mu:.05,ret:{whole:{bh:3}},exc:{F:.2},dtpa:0},
+"K-40":{n:"Potassium-40",hl:"1,25×10⁹ a",dt:"F",cat:"cos",inh:{F:3.0e-9},ing:6.2e-9,w:6.2e-9,sk:.001,mu:.05,ret:{whole:{bh:30}},exc:{F:.01},dtpa:0},
+};
+
+const CATS={af:"Activation",pf:"Fission",pa:"Actinides",med:"Médical",cos:"Naturel"};
+let ME=[];
+
+// ═══ INIT ═══
+function init(){
+  document.getElementById('evDate').value=new Date().toISOString().split('T')[0];
+  const o=Object.entries(DB).map(([k,v])=>`<option value="${k}">${v.n} (${k})</option>`).join('');
+  const b='<option value="">— Sélectionner —</option>';
+  ['nuclide','mn','an','un','trop-nuc'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=b+o});
+  bRef();buildWT();
+}
+
+function buildWT(){
+  const mx=Math.max(...WT.map(w=>w.wt));
+  document.getElementById('wt-chart').innerHTML=WT.map(w=>{
+    const pct=(w.wt/mx*100);
+    const clr=w.wt>=.12?'var(--d)':w.wt>=.04?'var(--w)':'var(--g)';
+    return`<div class="organ-bar"><div class="organ-label">${w.o}</div><div class="organ-track"><div class="organ-fill" style="width:${pct}%;background:${clr}">${w.wt}</div></div><div class="wt-badge">${(w.wt*100).toFixed(0)}%</div></div>`;
+  }).join('');
+  document.getElementById('wt-tbody').innerHTML=WT.map(w=>{
+    const clr=w.wt>=.12?'tr':w.wt>=.04?'to':'tg';
+    return`<tr><td style="font-weight:600">${w.o}</td><td><span class="tag ${clr}">${w.wt}</span></td><td>${w.sens}</td><td style="font-family:inherit;font-size:.7rem">${w.cancer}</td></tr>`;
+  }).join('');
+}
+
+function showTrop(){
+  const nk=document.getElementById('trop-nuc').value;
+  if(!nk||!TROP[nk]){document.getElementById('trop-result').innerHTML='';return}
+  const t=TROP[nk];
+  const bars=t.org.map(o=>`<div class="organ-bar"><div class="organ-label">${o.n}</div><div class="organ-track"><div class="organ-fill" style="width:${o.pct}%;background:var(--p)">${o.pct}%</div></div></div>`).join('');
+  document.getElementById('trop-result').innerHTML=`
+    <div style="margin-bottom:8px">${bars}</div>
+    <div class="ib" style="border-color:var(--p)">
+      <b>Rayonnement :</b> ${t.ray}<br>
+      <b>Note :</b> ${t.info}
+    </div>`;
+}
+
+function bRef(){
+  const f=document.getElementById('rf').value;
+  const e=Object.entries(DB).filter(([,v])=>!f||v.cat===f);
+  document.getElementById('nc').textContent=e.length;
+  const fmt=x=>x?x.toExponential(1):'—';
+  document.getElementById('rtb').innerHTML=e.map(([k,v])=>{
+    const t=TROP[k];const orgs=t?t.org.map(o=>o.n).slice(0,3).join(', '):'—';
+    return`<tr><td style="font-weight:600;color:var(--a)">${k}</td><td>${v.hl}</td><td>${fmt(v.inh.F)}</td><td>${fmt(v.inh.M)}</td><td>${fmt(v.inh.S)}</td><td>${fmt(v.ing)}</td><td><span class="tag tg">${v.dt}</span></td><td style="font-family:inherit;font-size:.65rem">${orgs}</td></tr>`;
+  }).join('');
+}
+
+// ═══ TABS ═══
+function sT(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+// ═══ HELPERS ═══
+function oPW(){const pw=document.getElementById('pathway').value;document.getElementById('ag').classList.toggle('hidden',pw!=='inh');document.getElementById('tg').classList.toggle('hidden',pw!=='inh')}
+function oNC(s,t){const n=document.getElementById(s).value;if(n&&DB[n]&&t)document.getElementById(t).value=DB[n].dt}
+function getModel(){return document.getElementById('modelSel')?.value||'oir'}
+function getRetModel(){return document.getElementById('retModel')?.value||'biexp'}
+function onModelChange(){
+  const m=getModel(),r=getRetModel();
+  const b=document.getElementById('modelBadge');
+  if(b)b.textContent=(m==='oir'?'OIR':'P68')+' + '+(r==='biexp'?'bi-exp':'mono');
+}
+function gDC(k,pw,at){const d=DB[k];if(!d)return null;
+const useOIR=getModel()==='oir';
+if(pw==='inh'){let t=at||d.dt;
+  // Try OIR first if selected
+  if(useOIR&&d.oir&&d.oir[t]!=null)return{c:d.oir[t],t,src:'OIR'};
+  if(d.inh[t]!=null)return{c:d.inh[t],t,src:'P68'};
+  for(const f of['M','F','S']){
+    if(useOIR&&d.oir&&d.oir[f]!=null)return{c:d.oir[f],t:f,src:'OIR'};
+    if(d.inh[f]!=null)return{c:d.inh[f],t:f,src:'P68'};
+  }
+  return null;
+}
+if(pw==='ing'){
+  if(useOIR&&d.oir?.ing!=null)return{c:d.oir.ing,t:'ing',src:'OIR'};
+  return{c:d.ing,t:'ing',src:'P68'};
+}
+if(pw==='wound')return{c:d.w||d.ing,t:'wound',src:'P68'};
+if(pw==='skin'){const fabs=d.sk||.001;const base=useOIR&&d.oir?.ing?d.oir.ing:d.ing;return{c:base*fabs,t:'skin (abs '+((fabs*100).toFixed(1))+'%)',fabs,src:useOIR?'OIR':'P68'};}
+if(pw==='mucous'){const fabs=d.mu||.1;const base=useOIR&&d.oir?.ing?d.oir.ing:d.ing;return{c:base*fabs,t:'muqueuse (abs '+((fabs*100).toFixed(0))+'%)',fabs,src:useOIR?'OIR':'P68'};}
+return null;}
+// ═══ CHRONIC ATMOSPHERIC CONTAMINATION ═══
+function calcChronic(){
+  const nk=document.getElementById('cn').value,at=document.getElementById('ct').value;
+  const conc=+document.getElementById('cconc').value; // Bq/m³
+  const dur=+document.getElementById('cdur').value; // hours
+  const rate=+document.getElementById('crate').value; // m³/h
+  if(!nk||!conc||!dur)return;
+  const dc=gDC(nk,'inh',at);if(!dc)return;
+  const intake=conc*rate*dur; // Bq
+  const dose=intake*dc.c;
+  const fd=fD(dose);
+  let det=tr('Nucléide',DB[nk].n)+tr('Concentration',conc+' Bq/m³')
+    +tr('Durée',dur+' h')+tr('Débit resp.',rate+' m³/h')
+    +tr('Intake total',intake.toFixed(0)+' Bq')
+    +tr('Type absorption',dc.t)
+    +tr('e(50)',dc.c.toExponential(2)+' Sv/Bq')
+    +tr('E(50)',`<b style="color:var(--a)">${fd.v} ${fd.u}</b>`);
+  document.getElementById('cr').classList.remove('hidden');
+  document.getElementById('crc').innerHTML=resHTML(dose,det,nk,
+    `<div class="ib" style="margin-top:8px"><b>Formule :</b> Intake = C × V̇ × t = ${conc} × ${rate} × ${dur} = ${intake.toFixed(0)} Bq<br>E(50) = Intake × e(50) = ${intake.toFixed(0)} × ${dc.c.toExponential(2)} = ${fd.v} ${fd.u}</div>`);
+  document.getElementById('cr').scrollIntoView({behavior:'smooth'});
+}
+function fD(sv){if(sv>=1)return{v:sv.toFixed(3),u:'Sv'};if(sv>=1e-3)return{v:(sv*1e3).toFixed(3),u:'mSv'};if(sv>=1e-6)return{v:(sv*1e6).toFixed(2),u:'μSv'};return{v:(sv*1e9).toFixed(1),u:'nSv'}}
+function dC(m){return m<6?'g':m<20?'w':'d'}
+function ip(m){if(m<.001)return{t:'Dose négligeable',tg:'tg',l:'Négligeable'};if(m<1)return{t:'Faible — sous limite publique.',tg:'tg',l:'Très faible'};if(m<6)return{t:'Modérée — surveillance renforcée.',tg:'tg',l:'Modérée'};if(m<20)return{t:'⚠️ Significative — informer PCR + MdT.',tg:'to',l:'Significative'};if(m<100)return{t:'🚨 DÉPASSEMENT — ESS ASN.',tg:'tr',l:'Dépassement'};if(m<500)return{t:'🚨 TRÈS ÉLEVÉE — urgence médicale.',tg:'tr',l:'Urgence'};return{t:'☠️ DOSE LÉTALE.',tg:'tr',l:'Critique'}}
+function tr(l,v){return`<tr><td style="width:46%">${l}</td><td>${v}</td></tr>`}
+
+function getRSFactor(){
+  const cbs=document.querySelectorAll('#tab-patient input[type="checkbox"]:checked');
+  let score=0;cbs.forEach(c=>score+=parseInt(c.dataset.rs||0));
+  return{score,factor:score>=8?2:score>=4?1.5:score>=2?1.2:1};
+}
+
+function organHTML(nk,dose){
+  if(!TROP[nk])return'';
+  const t=TROP[nk];
+  let html=`<div style="margin-top:12px;font-size:.73rem;font-weight:600;color:var(--p);margin-bottom:6px">🎯 Distribution organique de la dose</div>`;
+  html+=t.org.map(o=>{
+    const od=dose*(o.pct/100);const fd=fD(od);
+    return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+      <div style="width:80px;font-size:.66rem;text-align:right;color:var(--tm);flex-shrink:0">${o.n}</div>
+      <div style="flex:1;height:14px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="width:${o.pct}%;height:100%;background:var(--p);border-radius:3px;opacity:.7"></div></div>
+      <div style="width:90px;font-size:.65rem;font-family:'JetBrains Mono',monospace;color:var(--p);font-weight:600;flex-shrink:0">${fd.v} ${fd.u} <span style="color:var(--tm);font-weight:400">${o.pct}%</span></div>
+    </div>`;
+  }).join('');
+  html+=`<div class="ib" style="border-color:var(--p);margin-top:6px"><b>Rayonnement :</b> ${t.ray} — ${t.info}</div>`;
+  return html;
+}
+
+function rsHTML(dose){
+  const rs=getRSFactor();
+  if(rs.score===0)return'';
+  const adj=dose*rs.factor;const fd=fD(adj);const mSv=adj*1e3;const i=ip(mSv);
+  return`<div class="ib" style="border-color:var(--d);margin-top:10px">
+    🧬 <b>Ajustement radiosensibilité</b> (score ${rs.score}, facteur ×${rs.factor}) :<br>
+    Dose ajustée indicative : <b style="color:var(--d)">${fd.v} ${fd.u}</b> — <span class="tag ${i.tg}">${i.l}</span><br>
+    <span style="font-size:.65rem;color:var(--tm)">Ce facteur est indicatif. Il n'existe pas de facteur multiplicatif officiel validé par la CIPR pour la radiosensibilité individuelle.</span>
+  </div>`;
+}
+
+function resHTML(dose,det,nk,extra=''){
+  const fd=fD(dose);const mSv=dose*1e3;const i=ip(mSv);const pct=Math.min(mSv/20*100,100);const c=dC(mSv);
+  return`<div class="dv" style="color:var(--${c})">${fd.v} <span class="du">${fd.u}</span></div>
+    <div class="sb"><div class="sbf" style="width:${pct}%;background:var(--${c})"></div></div>
+    <div style="text-align:center;font-size:.68rem;color:var(--tm)">${pct.toFixed(1)}% de 20 mSv</div>
+    <div style="text-align:center;margin-top:6px"><span class="tag ${i.tg}">${i.l}</span></div>
+    <div class="ib">${i.t}</div>
+    ${nk?organHTML(nk,dose):''}
+    ${rsHTML(dose)}
+    <table>${det}</table>${extra}`;
+}
+
+// ═══ SINGLE CALC ═══
+function calcS(){
+  const nk=document.getElementById('nuclide').value,pw=document.getElementById('pathway').value,at=document.getElementById('absType').value,act=+document.getElementById('activity').value,ctx=document.getElementById('ctx').value,dt=document.getElementById('evDate').value;
+  if(!nk){alert('Sélectionnez un nucléide.');return}if(!act||act<=0){alert('Activité invalide.');return}
+  const dc=gDC(nk,pw,at);if(!dc){alert('Pas de coefficient.');return}
+  const dose=act*dc.c;const fd=fD(dose);const PW={inh:'Inhalation',ing:'Ingestion',wound:'Plaie',skin:'Transcutanée',mucous:'Muqueuse'};
+  let d=tr('Nucléide',DB[nk].n+' ('+nk+')')+tr('Voie',PW[pw]);
+  if(pw==='inh')d+=tr('Type absorption',dc.t);
+  d+=tr('Activité',act.toLocaleString('fr-FR')+' Bq')+tr('e(50)',`<span style="color:var(--p)">${dc.c.toExponential(2)} Sv/Bq</span>`)+tr('E(50)',`<b style="color:var(--a)">${fd.v} ${fd.u}</b>`);
+  if(dt)d+=tr('Date',dt);if(ctx)d+=tr('Contexte',`<span style="font-family:inherit">${ctx}</span>`);
+  document.getElementById('sr').classList.remove('hidden');
+  document.getElementById('src').innerHTML=resHTML(dose,d,nk);
+  document.getElementById('sr').scrollIntoView({behavior:'smooth'});
+}
+function resetS(){document.getElementById('nuclide').value='';document.getElementById('activity').value=1000;document.getElementById('sr').classList.add('hidden')}
+
+// ═══ MULTI ═══
+function addN(){const nk=document.getElementById('mn').value,pw=document.getElementById('mp').value,at=document.getElementById('mt').value,act=+document.getElementById('ma').value;if(!nk||!act||act<=0)return;const dc=gDC(nk,pw,at);if(!dc)return;ME.push({k:nk,n:DB[nk].n,pw,at:dc.t,act,c:dc.c,dose:act*dc.c});rML()}
+function rN(i){ME.splice(i,1);rML();document.getElementById('mr').classList.add('hidden')}
+function rML(){document.getElementById('ml').innerHTML=ME.map((e,i)=>`<div class="nc">${e.k}·${e.act}Bq <span class="x" onclick="rN(${i})">×</span></div>`).join('')}
+function clrM(){ME=[];rML();document.getElementById('mr').classList.add('hidden')}
+function calcM(){
+  if(!ME.length)return;const tot=ME.reduce((s,e)=>s+e.dose,0);const fd=fD(tot);const mx=Math.max(...ME.map(e=>e.dose));
+  let bars=ME.map(e=>{const f=fD(e.dose);return`<div class="br"><div class="bl">${e.k}</div><div class="bt"><div class="bf" style="width:${e.dose/mx*100}%;background:var(--a)">${f.v} ${f.u}</div></div></div>`}).join('');
+  let rows=ME.map(e=>{const f=fD(e.dose);return`<tr><td style="color:var(--a)">${e.k}</td><td>${e.act}</td><td>${e.c.toExponential(1)}</td><td>${f.v} ${f.u}</td><td>${(e.dose/tot*100).toFixed(1)}%</td></tr>`}).join('');
+  document.getElementById('mr').classList.remove('hidden');
+  document.getElementById('mrc').innerHTML=resHTML(tot,`<thead><tr><th>Nuc.</th><th>Bq</th><th>e(50)</th><th>Dose</th><th>%</th></tr></thead>${rows}`,null,`<div style="margin-top:10px">${bars}</div>`);
+  document.getElementById('mr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ RADIOSENSIBILITY SCORE ═══
+function calcRS(){
+  const cbs=document.querySelectorAll('#tab-patient input[type="checkbox"]');
+  let score=0,cats={gen:0,med:0,phy:0,exp:0};
+  cbs.forEach(c=>{if(c.checked){const s=parseInt(c.dataset.rs||0);score+=s;cats[c.dataset.cat]+=s}});
+  const pct=Math.min(score/20*100,100);
+  document.getElementById('rs-score').textContent=score;
+  document.getElementById('rs-score').style.color=score>=8?'var(--d)':score>=4?'var(--w)':'var(--g)';
+  document.getElementById('rs-marker').style.left=pct+'%';
+  let level,reco;
+  if(score>=8){level='🚨 Radiosensibilité TRÈS ÉLEVÉE';reco=`<div class="ib" style="border-color:var(--d);margin-top:8px"><b>Recommandations :</b><br>• Reclassement en catégorie A impératif si exposé<br>• Dosimétrie opérationnelle systématique<br>• Suivi médical renforcé (semestriel minimum)<br>• Discuter aptitude au poste exposé avec le médecin du travail<br>• Limite de dose individuelle réduite recommandée<br>• Surveillance cytogénétique si dose significative</div>`}
+  else if(score>=4){level='⚠️ Radiosensibilité MODÉRÉE';reco=`<div class="ib" style="border-color:var(--w);margin-top:8px"><b>Recommandations :</b><br>• Dosimétrie passive + opérationnelle recommandée<br>• Suivi médical annuel avec bilan radiotoxicologique<br>• Réduction de dose ALARA renforcée<br>• Information du PCR sur les facteurs de risque</div>`}
+  else if(score>=2){level='Radiosensibilité légèrement augmentée';reco=`<div class="ib" style="border-color:var(--a);margin-top:8px"><b>Recommandations :</b><br>• Surveillance dosimétrique standard<br>• Signaler les facteurs au médecin du travail<br>• ALARA standard</div>`}
+  else{level='Radiosensibilité standard — pas de facteur de risque identifié';reco=''}
+  document.getElementById('rs-interp').innerHTML=level;
+  document.getElementById('rs-reco').innerHTML=reco;
+  document.getElementById('rs-reco').classList.toggle('hidden',!reco);
+}
+
+// ═══ EXCRETION ═══
+function calcU(){
+  const nk=document.getElementById('un').value,pw=document.getElementById('upw').value,at=document.getElementById('ut').value,ua=+document.getElementById('ua').value,days=+document.getElementById('ud').value,dtpaOn=document.getElementById('udtpa').value==='1';
+  if(!nk||!ua)return;const d=DB[nk];if(!d)return;
+  const dc=gDC(nk,pw,at);if(!dc)return;
+  let eu0=d.exc?.[dc.t]||d.exc?.[d.dt]||d.exc?.M||d.exc?.F||.01;
+  const bh=d.ret?.whole?.bh||d.ret?.lung?.bh||100;
+  const euT=eu0*Math.exp(-.693*(days-1)/bh);
+  if(euT<=1e-12){document.getElementById('ur').classList.remove('hidden');document.getElementById('urc').innerHTML=`<div class="ib" style="border-color:var(--w)">⚠️ Fraction d'excrétion négligeable à J+${days}.</div>`;return}
+  let intake=ua/euT;let note='';
+  if(dtpaOn&&d.dtpa){intake/=50;note=`<div class="ib" style="border-color:var(--p);margin-top:8px">💉 Correction DTPA : excrétion majorée ~×50. Incorporation corrigée ÷50.</div>`}
+  const dose=intake*dc.c;
+  let det=tr('Nucléide',d.n)+tr('Excrétion 24h',ua+' Bq/j')+tr('Délai','J+'+days)+tr('eu(t)',euT.toExponential(2)+' /j')+tr('Incorporation',intake.toFixed(0)+' Bq')+tr('E(50)',`<b style="color:var(--a)">${fD(dose).v} ${fD(dose).u}</b>`);
+  document.getElementById('ur').classList.remove('hidden');
+  document.getElementById('urc').innerHTML=resHTML(dose,det,nk,note);
+  document.getElementById('ur').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ DTPA ═══
+function calcD(){
+  const nk=document.getElementById('dn').value,pw=document.getElementById('dpw').value,act=+document.getElementById('da').value,dh=+document.getElementById('dh').value,ni=+document.getElementById('dni').value,dt=document.getElementById('dty').value;
+  const d=DB[nk];if(!d)return;const dc=gDC(nk,pw,d.dt);if(!dc)return;
+  const dN=act*dc.c;let bf=pw==='wound'?.9:.65;if(dt==='Zn')bf*=.6;
+  const dp=Math.exp(-.693*dh/6),ij=1-Math.exp(-.3*ni),rf=bf*dp*ij,dT=dN*(1-rf),sv=dN-dT;
+  const fN=fD(dN),fT=fD(dT),fS=fD(sv),iN=ip(dN*1e3),iT=ip(dT*1e3);
+  document.getElementById('dr').classList.remove('hidden');
+  document.getElementById('drc').innerHTML=`
+    <div class="tc"><div class="kpi" style="background:var(--s2);border-radius:var(--r)"><div class="kv" style="color:var(--d)">${fN.v} ${fN.u}</div><div class="kl">Sans DTPA</div><span class="tag ${iN.tg}">${iN.l}</span></div>
+    <div class="kpi" style="background:var(--s2);border-radius:var(--r)"><div class="kv" style="color:var(--g)">${fT.v} ${fT.u}</div><div class="kl">Avec DTPA</div><span class="tag ${iT.tg}">${iT.l}</span></div></div>
+    <div class="kpi" style="margin-top:8px"><div class="kv" style="color:var(--tl)">−${(rf*100).toFixed(0)}%</div><div class="kl">${fS.v} ${fS.u} économisés</div></div>
+    ${organHTML(nk,dT)}
+    <table style="margin-top:10px">${tr('Actinide',d.n)}${tr('Délai',dh+' h')}${tr('Injections',ni)}${tr('Type',dt+'-DTPA')}${tr('Réduction',`<b style="color:var(--tl)">${(rf*100).toFixed(1)}%</b>`)}</table>
+    <div class="ib" style="margin-top:8px"><b>Protocole :</b> Ca-DTPA 1g IV en 1ère injection (≤24h), relais Zn-DTPA 1g IV 3-5×/sem. Surveillance NFS, iono, créat, zinc sérique. Réf: NCRP 161, FDA EUA.</div>`;
+  document.getElementById('dr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ CHRONIC PRESETS ═══
+function fillChronic(v){
+  const P={cnpe8:{c:5,d:8,r:'1.2'},cnpe4:{c:20,d:4,r:'1.5'},labo:{c:2,d:8,r:'1.2'},demantel:{c:50,d:6,r:'2.5'},incident:{c:500,d:.5,r:'1.5'}};
+  if(!P[v])return;const p=P[v];
+  document.getElementById('cconc').value=p.c;document.getElementById('cdur').value=p.d;document.getElementById('crate').value=p.r;
+}
+// ═══ SKIN SURFACE CALC ═══
+function calcSkin(){
+  const nk=document.getElementById('skn').value;
+  const sa=+document.getElementById('skact').value; // Bq/cm²
+  const srf=+document.getElementById('sksrf').value; // cm²
+  const dur=+document.getElementById('skdur').value; // min
+  if(!nk||!sa||!srf||!dur)return;
+  const d=DB[nk];if(!d)return;
+  const fabs=d.sk||.001;
+  // Simplified: absorbed = surface_activity × area × fabs × time_factor
+  // time_factor: fraction absorbed increases with contact time, simplified sigmoid
+  const tHours=dur/60;
+  const timeFrac=1-Math.exp(-0.5*tHours); // ~39% at 1h, ~63% at 2h, ~86% at 4h
+  const absorbed=sa*srf*fabs*timeFrac;
+  const dc=gDC(nk,'ing',''); // use ingestion coefficient for systemic dose
+  if(!dc)return;
+  const dose=absorbed*dc.c;const fd=fD(dose);
+  // Also compute skin dose (local beta/alpha)
+  const skinDoseLocal=sa*srf*1e-6*0.01; // very rough local skin dose estimate
+  let det=tr('Nucléide',d.n)+tr('Act. surfacique',sa+' Bq/cm²')
+    +tr('Surface',srf+' cm²')+tr('Durée contact',dur+' min')
+    +tr('Frac. absorption cutanée',((fabs*100).toFixed(2))+'%')
+    +tr('Facteur temps',((timeFrac*100).toFixed(1))+'%')
+    +tr('Activité absorbée',absorbed.toFixed(1)+' Bq')
+    +tr('E(50) systémique',`<b style="color:var(--a)">${fd.v} ${fd.u}</b>`);
+  document.getElementById('cr').classList.remove('hidden');
+  document.getElementById('crc').innerHTML=resHTML(dose,det,nk,
+    `<div class="ib" style="margin-top:8px"><b>⚠️ Important :</b> La dose cutanée locale (irradiation β/α de la peau) n'est pas incluse ici — elle dépend du type de rayonnement et de l'épaisseur de peau. Pour les émetteurs α (Pu, Am), la dose locale peau est généralement négligeable (arrêt dans la couche cornée). Pour les β (Sr-90, P-32), la dose peau locale peut être significative → consulter CIPR 130.<br><br>
+    <b>Décontamination :</b> Chaque minute compte ! À ${dur} min, ${(timeFrac*100).toFixed(0)}% de l'absorption maximale est atteinte. Décontaminer dans les 10 premières minutes réduit l'incorporation de &gt;80%.</div>`);
+  document.getElementById('cr').scrollIntoView({behavior:'smooth'});
+}
+// ═══ INIT ADDITIONS ═══
+const o2=Object.entries(DB).map(([k,v])=>`<option value="${k}">${v.n} (${k})</option>`).join('');
+const b2='<option value="">— Sélectionner —</option>';
+['cn','skn','fn','dmdn','dmdcn'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=b2+o2});
+
+// ═══ FIT: MULTI-MEASUREMENT WEIGHTED LEAST SQUARES ═══
+let fitMeas=[];
+function addFitM(){
+  const mt=document.getElementById('fmtype').value,day=+document.getElementById('fmday').value,
+    val=+document.getElementById('fmval').value,sf=+document.getElementById('fmsf').value;
+  if(!val||day<0)return;
+  fitMeas.push({mt,day,val,sf});
+  renderFitList();
+}
+function remFitM(i){fitMeas.splice(i,1);renderFitList();document.getElementById('fr').classList.add('hidden')}
+function clearFit(){fitMeas=[];renderFitList();document.getElementById('fr').classList.add('hidden')}
+function renderFitList(){
+  const ML={urine:'🧪 Urine',feces:'💩 Selles',whole:'🧍 Corps',thyroid:'🦋 Thyroïde',lung:'🫁 Poumons'};
+  document.getElementById('fit-list').innerHTML=fitMeas.length?
+    `<table><thead><tr><th>Type</th><th>Jour</th><th>Activité</th><th>SF</th><th></th></tr></thead><tbody>`+
+    fitMeas.map((m,i)=>`<tr><td>${ML[m.mt]||m.mt}</td><td>J+${m.day}</td><td>${m.val}</td><td>${m.sf}</td><td><span class="x" onclick="remFitM(${i})" style="cursor:pointer;color:var(--d)">×</span></td></tr>`).join('')+
+    `</tbody></table>`:'<span style="font-size:.7rem;color:var(--tm)">Aucune mesure ajoutée.</span>';
+}
+// Bi-exponential retention: R(t) = a1*exp(-0.693t/t1) + a2*exp(-0.693t/t2)
+function biexpR(params,day){
+  return params.a1*Math.exp(-.693*day/params.t1)+params.a2*Math.exp(-.693*day/params.t2);
+}
+// Get retention/excretion fraction at day t
+function getFrac(nk,pw,at,mt,day){
+  const d=DB[nk];if(!d)return 0;
+  const t=at||d.dt;
+  const useBi=getRetModel()==='biexp';
+
+  if(mt==='urine'){
+    const eu0=d.exc?.[t]||d.exc?.[d.dt]||d.exc?.M||d.exc?.F||.01;
+    // For urine, use bi-exp decay of the excretion rate
+    if(useBi&&d.biret?.whole?.[t]){
+      const p=d.biret.whole[t];
+      const retNow=biexpR(p,Math.max(day,1));
+      const retPrev=biexpR(p,Math.max(day-1,0));
+      // Daily excretion ≈ retention change × eu0_scaling
+      return eu0*retNow/(p.a1*Math.exp(-.693/p.t1)+p.a2*Math.exp(-.693/p.t2));
+    }
+    const bh=d.ret?.whole?.bh||d.ret?.lung?.bh||100;
+    return eu0*Math.exp(-.693*Math.max(day-1,0)/bh);
+  }
+  if(mt==='feces'){
+    const ef0=d.fec?.[t]||d.fec?.[d.dt]||d.fec?.M||0.02;
+    if(day<=3)return ef0*(1+2*Math.exp(-day));
+    const bh=d.ret?.whole?.bh||d.ret?.lung?.bh||100;
+    return ef0*0.05*Math.exp(-.693*(day-3)/bh);
+  }
+  if(mt==='whole'||mt==='thyroid'||mt==='lung'){
+    // Try bi-exponential first
+    if(useBi&&d.biret){
+      const organ=mt==='whole'?'whole':mt;
+      const bp=d.biret?.[organ]?.[t];
+      if(bp)return biexpR(bp,day);
+    }
+    // Fallback: mono-exponential
+    const rf=d.ret?.[mt]||d.ret?.whole;
+    if(!rf)return 0;
+    const up=rf.up||1,bh=rf.bh;
+    return up*Math.exp(-.693*day/bh);
+  }
+  return 0;
+}
+function calcFit(){
+  const nk=document.getElementById('fn').value,pw=document.getElementById('fpw').value,
+    at=document.getElementById('ft').value,testAll=document.getElementById('fall').value==='1';
+  if(!nk||!fitMeas.length){alert('Sélectionner un nucléide et ajouter des mesures.');return}
+
+  const types=testAll?['F','M','S','V'].filter(t=>DB[nk].inh[t]!=null||(getModel()==='oir'&&DB[nk].oir?.[t]!=null)):[at||DB[nk].dt];
+  let best={chi2:Infinity,I:0,type:'',dose:0,dc:null};
+
+  for(const typ of types){
+    // Weighted least squares: I = Σ(Mi*fi/σi²) / Σ(fi²/σi²)
+    let num=0,den=0;
+    for(const m of fitMeas){
+      const f=getFrac(nk,pw,typ,m.mt,m.day);
+      if(f<=0)continue;
+      const sigma=m.val*Math.log(m.sf); // geometric SD → arithmetic approx
+      const w=1/(sigma*sigma||1);
+      num+=m.val*f*w;
+      den+=f*f*w;
+    }
+    if(den<=0)continue;
+    const I=num/den;
+    // Chi-squared
+    let chi2=0,ndf=0;
+    for(const m of fitMeas){
+      const f=getFrac(nk,pw,typ,m.mt,m.day);
+      if(f<=0)continue;
+      const expected=I*f;
+      const s=Math.log(m.sf)||1; // écart-type géométrique (log-normal)
+      chi2+=Math.pow(Math.log(m.val/expected)/s,2);
+      ndf++;
+    }
+    const dc=gDC(nk,pw,typ);
+    const dose=dc?I*dc.c:0;
+    if(chi2<best.chi2||best.chi2===Infinity)best={chi2,I,type:typ,dose,dc,ndf};
+  }
+
+  if(best.I<=0){alert('Ajustement impossible.');return}
+  const fd=fD(best.dose);const mSv=best.dose*1e3;const itp=ip(mSv);
+  const pVal=pChi2(best.chi2,best.ndf-1); // 1 paramètre ajusté (I)
+  const fitQual=pVal>.05?'tg':pVal>.01?'to':'tr';
+  const fitLabel=pVal>.05?'Bon':pVal>.01?'Acceptable':'Mauvais';
+
+  // Build fit details table
+  let rows=fitMeas.map(m=>{
+    const f=getFrac(nk,pw,best.type,m.mt,m.day);
+    const exp=best.I*f;
+    const ratio=m.val/exp;
+    return`<tr><td>${m.mt}</td><td>J+${m.day}</td><td>${m.val.toFixed(2)}</td><td>${exp.toFixed(2)}</td><td style="color:${Math.abs(ratio-1)<.3?'var(--g)':Math.abs(ratio-1)<.6?'var(--w)':'var(--d)'}">${ratio.toFixed(2)}</td></tr>`;
+  }).join('');
+
+  document.getElementById('fr').classList.remove('hidden');
+  document.getElementById('frc').innerHTML=`
+    <div class="tc" style="margin-bottom:12px">
+      <div class="kpi"><div class="kv" style="color:var(--p)">${best.I.toFixed(0)}</div><div class="kl">Incorporation estimée (Bq)</div></div>
+      <div class="kpi"><div class="kv" style="color:var(--${mSv<6?'g':mSv<20?'w':'d'})">${fd.v} ${fd.u}</div><div class="kl">Dose E(50)</div></div>
+    </div>
+    <div style="text-align:center"><span class="tag ${itp.tg}">${itp.l}</span> <span class="tag ${fitQual}">Fit: ${fitLabel}</span> <span class="tag tp">Type ${best.type}</span></div>
+    <div class="ib">${itp.t}</div>
+    ${DB[nk].chem&&DB[nk].chem[best.type]?`<div class="ib" style="border-color:var(--p);margin-top:6px">🧪 <b>Forme chimique type ${best.type} :</b> ${DB[nk].chem[best.type]}</div>`:''}
+    <table style="margin-top:10px">
+      <thead><tr><th>Mesure</th><th>Jour</th><th>Observé</th><th>Attendu</th><th>O/A</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <table style="margin-top:8px">
+      ${tr('Nucléide',DB[nk].n)}${tr('Type absorption',best.type)}
+      ${tr('e(50)',best.dc?best.dc.c.toExponential(2)+' Sv/Bq':'—')}
+      ${tr('χ²',best.chi2.toFixed(2)+' ('+best.ndf+' mesures)')}
+      ${tr('Nb mesures',fitMeas.length)}
+    </table>
+    ${rsHTML(best.dose)}
+    ${organHTML(nk,best.dose)}`;
+
+  // Draw SVG chart
+  drawFitChart(nk,pw,best.type,best.I);
+  document.getElementById('fr').scrollIntoView({behavior:'smooth'});
+}
+
+function drawFitChart(nk,pw,at,I){
+  const W=580,H=280,pad={l:60,r:20,t:20,b:40};
+  const pw2=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+  // Determine time range from measurements
+  const maxDay=Math.max(...fitMeas.map(m=>m.day),30)*1.3;
+  // Collect unique measurement types
+  const mtypes=[...new Set(fitMeas.map(m=>m.mt))];
+  const colors={urine:'#38bdf8',feces:'#f59e0b',whole:'#22c55e',thyroid:'#a78bfa',lung:'#2dd4bf'};
+  const labels={urine:'Urine',feces:'Selles',whole:'Corps entier',thyroid:'Thyroïde',lung:'Poumons'};
+
+  // Find y range (log scale)
+  const allVals=fitMeas.map(m=>m.val).filter(v=>v>0);
+  let yMin=Math.min(...allVals)*0.3,yMax=Math.max(...allVals)*3;
+  if(yMin<=0)yMin=0.001;
+
+  const logY=v=>Math.log10(Math.max(v,yMin));
+  const lMin=logY(yMin),lMax=logY(yMax);
+  const xScale=d=>(d/maxDay)*pw2;
+  const yScale=v=>ph-(logY(v)-lMin)/(lMax-lMin)*ph;
+
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px;background:var(--s2);border-radius:var(--r)">`;
+  // Grid
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ph*i/4;const lv=lMax-(lMax-lMin)*i/4;const v=Math.pow(10,lv);
+    svg+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="var(--bd)" stroke-dasharray="3,3"/>`;
+    svg+=`<text x="${pad.l-6}" y="${y+3}" text-anchor="end" fill="var(--tm)" font-size="9" font-family="JetBrains Mono">${v<0.01?v.toExponential(0):v<1?v.toFixed(2):v<100?v.toFixed(0):v.toExponential(0)}</text>`;
+  }
+  // X axis labels
+  const xSteps=[0,maxDay*.25,maxDay*.5,maxDay*.75,maxDay];
+  xSteps.forEach(d=>{
+    const x=pad.l+xScale(d);
+    svg+=`<text x="${x}" y="${H-5}" text-anchor="middle" fill="var(--tm)" font-size="9" font-family="JetBrains Mono">J+${Math.round(d)}</text>`;
+  });
+  svg+=`<text x="${W/2}" y="${H}" text-anchor="middle" fill="var(--tm)" font-size="9">Jours post-incorporation</text>`;
+
+  // Draw model curves for each measurement type
+  for(const mt of mtypes){
+    const col=colors[mt]||'#888';
+    let path='';
+    for(let d=0;d<=maxDay;d+=maxDay/100){
+      const f=getFrac(nk,pw,at,mt,d);
+      const v=I*f;if(v<=0)continue;
+      const x=pad.l+xScale(d),y=pad.t+yScale(v);
+      path+=(path?'L':'M')+x.toFixed(1)+','+y.toFixed(1);
+    }
+    if(path)svg+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="2" opacity="0.7"/>`;
+  }
+  // Draw measurement points
+  for(const m of fitMeas){
+    const col=colors[m.mt]||'#888';
+    const x=pad.l+xScale(m.day),y=pad.t+yScale(m.val);
+    // Error bars (SF)
+    const yUp=pad.t+yScale(m.val*m.sf),yDn=pad.t+yScale(m.val/m.sf);
+    svg+=`<line x1="${x}" y1="${yUp}" x2="${x}" y2="${yDn}" stroke="${col}" stroke-width="1.5" opacity="0.5"/>`;
+    svg+=`<circle cx="${x}" cy="${y}" r="4" fill="${col}" stroke="#fff" stroke-width="1"/>`;
+  }
+  // Legend
+  let lx=pad.l+10;
+  for(const mt of mtypes){
+    svg+=`<rect x="${lx}" y="${pad.t+4}" width="10" height="10" rx="2" fill="${colors[mt]}"/>`;
+    svg+=`<text x="${lx+14}" y="${pad.t+13}" fill="var(--t)" font-size="9" font-family="Inter">${labels[mt]}</text>`;
+    lx+=70;
+  }
+  svg+=`</svg>`;
+  document.getElementById('fit-chart').innerHTML=svg;
+}
+
+// ═══ DMD: DOSE MINIMALE DÉTECTABLE ═══
+function calcDMD(){
+  const nk=document.getElementById('dmdn').value,at=document.getElementById('dmdt').value,
+    mt=document.getElementById('dmdm').value,ld=+document.getElementById('dmdld').value,
+    interval=+document.getElementById('dmdi').value,pw=document.getElementById('dmdpw').value;
+  if(!nk||!ld)return;
+  const d=DB[nk];if(!d)return;
+  const dc=gDC(nk,pw,at||d.dt);if(!dc)return;
+  const typ=at||d.dt;
+
+  // DMD = max over t in [0,interval] of LD/f(t) × e(50)
+  // Worst case: contamination at time that minimizes f(t) at measurement day
+  // For measurement at day=interval, contamination could be day 0 to interval
+  // We scan to find the worst case
+  let maxIntake=0,worstDay=0;
+  for(let t=1;t<=interval;t++){
+    const f=getFrac(nk,pw,typ,mt,t);
+    if(f>0){
+      const intake=ld/f;
+      if(intake>maxIntake){maxIntake=intake;worstDay=t}
+    }
+  }
+  if(maxIntake<=0){
+    document.getElementById('dmdr').classList.remove('hidden');
+    document.getElementById('dmdrc').innerHTML=`<div class="ib" style="border-color:var(--d)">⚠️ Excrétion/rétention nulle sur cet intervalle — ce programme ne peut pas détecter ce nucléide avec cette mesure.</div>`;
+    return;
+  }
+  const dmd=maxIntake*dc.c;const fdmd=fD(dmd);const mSvDMD=dmd*1e3;const idmd=ip(mSvDMD);
+  const MT={urine:'Urine 24h',feces:'Selles 24h',whole:'Corps entier',thyroid:'Thyroïde'};
+  const INT={7:'Hebdo',14:'Bimensuel',30:'Mensuel',90:'Trimestriel',180:'Semestriel',365:'Annuel'};
+
+  document.getElementById('dmdr').classList.remove('hidden');
+  document.getElementById('dmdrc').innerHTML=`
+    <div class="dv" style="color:var(--${mSvDMD<1?'g':mSvDMD<6?'g':mSvDMD<20?'w':'d'})">${fdmd.v} <span class="du">${fdmd.u}</span></div>
+    <div style="text-align:center;font-size:.7rem;color:var(--tm)">Dose Minimale Détectable</div>
+    <div style="text-align:center;margin-top:6px"><span class="tag ${idmd.tg}">${mSvDMD<1?'DMD < 1 mSv ✅':mSvDMD<6?'DMD < 6 mSv ✅':'DMD > 6 mSv ⚠️'}</span></div>
+    <table style="margin-top:10px">
+      ${tr('Nucléide',d.n+' — Type '+typ)}
+      ${tr('Mesure',MT[mt]||mt)}
+      ${tr('Intervalle',INT[interval]||interval+' j')}
+      ${tr('Limite détection',ld+' Bq'+(mt.includes('ine')||mt==='feces'?'/j':''))}
+      ${tr('Pire cas','Contamination J−'+worstDay+' avant mesure')}
+      ${tr('Frac. résiduelle à J+'+worstDay,getFrac(nk,pw,typ,mt,worstDay).toExponential(2))}
+      ${tr('Incorporation max non détectée',maxIntake.toFixed(0)+' Bq')}
+      ${tr('e(50)',dc.c.toExponential(2)+' Sv/Bq')}
+      ${tr('DMD',`<b style="color:var(--a)">${fdmd.v} ${fdmd.u}</b>`)}
+    </table>
+    <div class="ib" style="margin-top:8px">${mSvDMD<1?'✅ Programme satisfaisant — la DMD est inférieure à 1 mSv, ce qui garantit une détection précoce.':mSvDMD<6?'✅ Programme acceptable — la DMD est sous le seuil d\'information PCR (6 mSv).':'⚠️ Programme insuffisant — envisager : réduire l\'intervalle, changer le type de mesure, abaisser la LD, ou combiner plusieurs types de mesures.'}</div>`;
+  document.getElementById('dmdr').scrollIntoView({behavior:'smooth'});
+}
+
+function compareDMD(){
+  const nk=document.getElementById('dmdcn').value,at=document.getElementById('dmdct').value;
+  if(!nk)return;
+  const d=DB[nk];if(!d)return;
+  const typ=at||d.dt;
+  const dc=gDC(nk,'inh',typ);if(!dc)return;
+
+  const measures=['urine','feces','whole','thyroid'];
+  const intervals=[14,30,90,180,365];
+  const lds={urine:1,feces:1,whole:50,thyroid:10};
+  const ML={urine:'Urine',feces:'Selles',whole:'Corps',thyroid:'Thyroïde'};
+
+  let results=[];
+  for(const mt of measures){
+    for(const intv of intervals){
+      let maxI=0;
+      for(let t=1;t<=intv;t++){
+        const f=getFrac(nk,'inh',typ,mt,t);
+        if(f>0){const intake=lds[mt]/f;if(intake>maxI)maxI=intake}
+      }
+      const dmd=maxI>0?maxI*dc.c:null;
+      results.push({mt,intv,dmd,maxI});
+    }
+  }
+
+  let rows=results.map(r=>{
+    if(!r.dmd)return`<tr><td>${ML[r.mt]}</td><td>${r.intv} j</td><td>—</td><td>—</td><td><span class="tag tr">N/A</span></td></tr>`;
+    const mSv=r.dmd*1e3;const fd=fD(r.dmd);
+    const ok=mSv<1?'tg':mSv<6?'tg':mSv<20?'to':'tr';
+    const lbl=mSv<1?'✅ Bon':mSv<6?'✅ OK':mSv<20?'⚠️':'❌';
+    return`<tr><td>${ML[r.mt]}</td><td>${r.intv} j</td><td>${r.maxI?.toFixed(0)||'—'}</td><td style="color:var(--a)">${fd.v} ${fd.u}</td><td><span class="tag ${ok}">${lbl}</span></td></tr>`;
+  }).join('');
+
+  // Find best program
+  const valid=results.filter(r=>r.dmd);
+  const bestDMD=valid.length?valid.reduce((a,b)=>a.dmd<b.dmd?a:b):null;
+
+  document.getElementById('dmdr').classList.remove('hidden');
+  document.getElementById('dmdrc').innerHTML=`
+    <div style="font-size:.75rem;font-weight:600;color:var(--a);margin-bottom:8px">Comparaison de ${results.length} programmes pour ${d.n} (Type ${typ})</div>
+    <div style="font-size:.68rem;color:var(--tm);margin-bottom:6px">LD urines/selles: ${lds.urine} Bq/j • LD corps: ${lds.whole} Bq • LD thyroïde: ${lds.thyroid} Bq</div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>Mesure</th><th>Intervalle</th><th>Incorp. max (Bq)</th><th>DMD</th><th>Qualité</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    ${bestDMD?`<div class="ib" style="margin-top:10px">🏆 <b>Meilleur programme :</b> ${ML[bestDMD.mt]} tous les ${bestDMD.intv} j → DMD = ${fD(bestDMD.dmd).v} ${fD(bestDMD.dmd).u}</div>`:''}
+    <div class="ib" style="margin-top:6px;border-color:var(--w);color:var(--tm)">⚠️ DMD simplifiée (mono-exponentiel). MIODOSE calcule la DMD par Monte-Carlo avec distributions de probabilité sur DAMA, date de contamination, variabilité excrétion et incertitude de mesure.</div>`;
+  document.getElementById('dmdr').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ DECAY CHAIN DATABASE ═══
+const CHAINS={
+U238:{name:"U-238 → Pb-206",members:[
+  {n:"U-238",hl:"4,47×10⁹ a",ray:"α",org:"Os, Reins",e50_inh_M:1.2e-6,e50_ing:3.1e-8,secular:1},
+  {n:"Th-234",hl:"24,1 j",ray:"β⁻",org:"Os, Foie",e50_inh_M:2.3e-9,e50_ing:5.9e-10,secular:1},
+  {n:"Pa-234m",hl:"1,17 min",ray:"β⁻",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"U-234",hl:"2,46×10⁵ a",ray:"α",org:"Os, Reins",e50_inh_M:1.4e-6,e50_ing:3.5e-8,secular:1},
+  {n:"Th-230",hl:"7,54×10⁴ a",ray:"α",org:"Os, Foie",e50_inh_M:7.3e-6,e50_ing:6.0e-8,secular:1},
+  {n:"Ra-226",hl:"1600 a",ray:"α, γ",org:"Os",e50_inh_M:1.4e-6,e50_ing:1.3e-7,secular:1},
+  {n:"Rn-222",hl:"3,82 j",ray:"α",org:"Poumons",e50_inh_M:0,e50_ing:0,secular:1,note:"Gaz — s'échappe si non confiné"},
+  {n:"Po-218",hl:"3,10 min",ray:"α",org:"Poumons",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Pb-214",hl:"26,8 min",ray:"β⁻, γ",org:"Poumons, Reins",e50_inh_M:1.4e-8,e50_ing:7.7e-11,secular:1},
+  {n:"Bi-214",hl:"19,9 min",ray:"β⁻, γ",org:"Reins",e50_inh_M:1.4e-8,e50_ing:4.7e-11,secular:1},
+  {n:"Po-214",hl:"164 μs",ray:"α",org:"Reins",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Pb-210",hl:"22,2 a",ray:"β⁻",org:"Os, Foie",e50_inh_M:6.2e-7,e50_ing:3.2e-7,secular:1},
+  {n:"Bi-210",hl:"5,01 j",ray:"β⁻",org:"Reins",e50_inh_M:2.9e-8,e50_ing:1.1e-9,secular:1},
+  {n:"Po-210",hl:"138 j",ray:"α ⚠️",org:"Foie, Rate, Reins",e50_inh_M:1.1e-6,e50_ing:1.8e-7,secular:1},
+  {n:"Pb-206",hl:"STABLE",ray:"—",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+]},
+U235:{name:"U-235 → Pb-207",members:[
+  {n:"U-235",hl:"7,04×10⁸ a",ray:"α, γ",org:"Os, Reins",e50_inh_M:1.3e-6,e50_ing:3.2e-8,secular:1},
+  {n:"Th-231",hl:"25,5 h",ray:"β⁻",org:"Os",e50_inh_M:1.2e-10,e50_ing:1.7e-11,secular:1},
+  {n:"Pa-231",hl:"3,28×10⁴ a",ray:"α",org:"Os, Foie",e50_inh_M:2.0e-5,e50_ing:1.8e-7,secular:1},
+  {n:"Ac-227",hl:"21,8 a",ray:"β⁻, α",org:"Os, Foie",e50_inh_M:2.4e-5,e50_ing:1.7e-7,secular:1},
+  {n:"Th-227",hl:"18,7 j",ray:"α",org:"Os",e50_inh_M:1.5e-6,e50_ing:1.3e-9,secular:1},
+  {n:"Ra-223",hl:"11,4 j",ray:"α",org:"Os",e50_inh_M:1.8e-6,e50_ing:4.1e-8,secular:1},
+  {n:"Rn-219",hl:"3,96 s",ray:"α",org:"Poumons",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Po-215",hl:"1,78 ms",ray:"α",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Pb-211",hl:"36,1 min",ray:"β⁻",org:"Reins",e50_inh_M:1.3e-8,e50_ing:1.0e-10,secular:1},
+  {n:"Bi-211",hl:"2,14 min",ray:"α",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Tl-207",hl:"4,77 min",ray:"β⁻",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Pb-207",hl:"STABLE",ray:"—",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+]},
+Th232:{name:"Th-232 → Pb-208",members:[
+  {n:"Th-232",hl:"1,4×10¹⁰ a",ray:"α",org:"Os, Foie, Poumons",e50_inh_M:4.3e-5,e50_ing:2.3e-7,secular:1},
+  {n:"Ra-228",hl:"5,75 a",ray:"β⁻",org:"Os",e50_inh_M:1.7e-6,e50_ing:6.9e-7,secular:1},
+  {n:"Ac-228",hl:"6,15 h",ray:"β⁻, γ",org:"Os, Foie",e50_inh_M:2.5e-8,e50_ing:4.3e-10,secular:1},
+  {n:"Th-228",hl:"1,91 a",ray:"α",org:"Os, Foie",e50_inh_M:3.2e-5,e50_ing:7.2e-8,secular:1},
+  {n:"Ra-224",hl:"3,66 j",ray:"α",org:"Os",e50_inh_M:2.4e-6,e50_ing:6.5e-8,secular:1},
+  {n:"Rn-220",hl:"55,6 s",ray:"α",org:"Poumons",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Po-216",hl:"0,145 s",ray:"α",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Pb-212",hl:"10,6 h",ray:"β⁻",org:"Reins, Os",e50_inh_M:1.9e-8,e50_ing:5.9e-9,secular:1},
+  {n:"Bi-212",hl:"60,6 min",ray:"α, β⁻",org:"Reins",e50_inh_M:3.1e-8,e50_ing:2.6e-10,secular:1},
+  {n:"Po-212",hl:"0,3 μs",ray:"α",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+  {n:"Pb-208",hl:"STABLE",ray:"—",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+]},
+Np237:{name:"Np-237 → Bi-209",members:[
+  {n:"Np-237",hl:"2,14×10⁶ a",ray:"α, γ",org:"Os, Foie",e50_inh_M:2.1e-5,e50_ing:1.1e-7,secular:1},
+  {n:"Pa-233",hl:"27,0 j",ray:"β⁻, γ",org:"Os, Foie",e50_inh_M:3.9e-9,e50_ing:8.7e-10,secular:1},
+  {n:"U-233",hl:"1,59×10⁵ a",ray:"α",org:"Os, Reins",e50_inh_M:3.6e-6,e50_ing:5.1e-8,secular:1},
+  {n:"Th-229",hl:"7340 a",ray:"α",org:"Os, Foie",e50_inh_M:5.6e-5,e50_ing:4.9e-7,secular:1},
+  {n:"Ra-225",hl:"14,9 j",ray:"β⁻",org:"Os",e50_inh_M:6.7e-7,e50_ing:9.9e-8,secular:1},
+  {n:"Ac-225",hl:"10,0 j",ray:"α",org:"Os, Foie",e50_inh_M:8.5e-6,e50_ing:2.4e-8,secular:1},
+  {n:"Bi-209",hl:"STABLE",ray:"—",org:"—",e50_inh_M:0,e50_ing:0,secular:1},
+]},
+};
+
+// ═══ URANIUM ISOTOPIC MIXTURES ═══
+// Specific activity (Bq/mg)
+const U_SA={"U-234":2.31e5,"U-235":80.0,"U-238":12.4};
+const U_MIX={
+  nat: {name:"Naturel",pct234:0.0054,pct235:0.72,pct238:99.275},
+  dep: {name:"Appauvri",pct234:0.001,pct235:0.2,pct238:99.799},
+  enr3:{name:"Enrichi 3.5%",pct234:0.026,pct235:3.5,pct238:96.474},
+  enr20:{name:"Enrichi 20%",pct234:0.16,pct235:20,pct238:79.84},
+  enr93:{name:"Enrichi 93%",pct234:1.02,pct235:93,pct238:5.98},
+};
+
+// ═══ SHOW CHAIN VISUALIZATION ═══
+function showChain(){
+  const ck=document.getElementById('chain-sel').value;
+  if(!ck||!CHAINS[ck]){document.getElementById('chain-visual').classList.add('hidden');return}
+  const ch=CHAINS[ck];
+  document.getElementById('chain-visual').classList.remove('hidden');
+
+  // Build SVG decay chain
+  const m=ch.members;const W=Math.min(680,m.length*52);const H=160;
+  const step=W/(m.length);
+  const rayColor=r=>{if(r.includes('α'))return'var(--d)';if(r.includes('β'))return'var(--sky)';if(r.includes('γ'))return'var(--w)';return'var(--tm)'};
+
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px;overflow:visible">`;
+  m.forEach((nd,i)=>{
+    const x=i*step+step/2;const y=nd.ray.includes('α')?50:90;
+    const col=rayColor(nd.ray);
+    // Box
+    svg+=`<rect x="${x-22}" y="${y-14}" width="44" height="28" rx="4" fill="var(--s2)" stroke="${col}" stroke-width="1.5"/>`;
+    svg+=`<text x="${x}" y="${y+2}" text-anchor="middle" fill="${col}" font-size="7.5" font-weight="700" font-family="JetBrains Mono">${nd.n}</text>`;
+    svg+=`<text x="${x}" y="${y+11}" text-anchor="middle" fill="var(--tm)" font-size="5" font-family="Inter">${nd.ray}</text>`;
+    // Arrow to next
+    if(i<m.length-1){
+      const nx=(i+1)*step+step/2;const ny=m[i+1].ray.includes('α')?50:90;
+      svg+=`<line x1="${x+22}" y1="${y}" x2="${nx-22}" y2="${ny}" stroke="var(--bd)" stroke-width="1" marker-end="url(#arr)"/>`;
+    }
+  });
+  svg+=`<defs><marker id="arr" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L6,3 L0,6" fill="var(--bd)"/></marker></defs>`;
+  // Legend
+  svg+=`<rect x="4" y="${H-22}" width="8" height="8" rx="2" fill="var(--d)"/><text x="16" y="${H-14}" fill="var(--tm)" font-size="7">α</text>`;
+  svg+=`<rect x="34" y="${H-22}" width="8" height="8" rx="2" fill="var(--sky)"/><text x="46" y="${H-14}" fill="var(--tm)" font-size="7">β</text>`;
+  svg+=`<rect x="64" y="${H-22}" width="8" height="8" rx="2" fill="var(--w)"/><text x="76" y="${H-14}" fill="var(--tm)" font-size="7">γ</text>`;
+  svg+=`</svg>`;
+  document.getElementById('chain-svg').innerHTML=svg;
+}
+
+// ═══ CALCULATE CHAIN DOSE ═══
+function calcChain(){
+  const ck=document.getElementById('chain-sel').value,act=+document.getElementById('chain-act').value,
+    eq=document.getElementById('chain-eq').value,pw=document.getElementById('chain-pw').value;
+  if(!ck||!CHAINS[ck]||!act)return;
+  const ch=CHAINS[ck];const eKey=pw==='inh'?'e50_inh_M':'e50_ing';
+
+  let totalDose=0;const results=[];
+  for(const nd of ch.members){
+    const e50=nd[eKey]||0;
+    // In secular equilibrium, activity of each daughter = parent activity
+    const ndAct=eq==='secular'?act:(eq==='recent'&&nd.n!==ch.members[0].n?0:act);
+    const dose=ndAct*e50;
+    totalDose+=dose;
+    if(e50>0)results.push({n:nd.n,hl:nd.hl,ray:nd.ray,org:nd.org,act:ndAct,e50,dose,pct:0});
+  }
+  results.forEach(r=>r.pct=totalDose>0?(r.dose/totalDose*100):0);
+  results.sort((a,b)=>b.dose-a.dose);
+
+  const fd=fD(totalDose);const mSv=totalDose*1e3;const itp=ip(mSv);
+  const topContrib=results.slice(0,5);
+  const maxDose=Math.max(...topContrib.map(r=>r.dose));
+
+  let bars=topContrib.map(r=>{
+    const f=fD(r.dose);const col=r.ray.includes('α')?'var(--d)':r.ray.includes('β')?'var(--sky)':'var(--w)';
+    return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+      <div style="width:60px;font-size:.65rem;text-align:right;color:var(--tm);flex-shrink:0">${r.n}</div>
+      <div style="flex:1;height:14px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="width:${r.dose/maxDose*100}%;height:100%;background:${col};border-radius:3px;opacity:.7"></div></div>
+      <div style="width:110px;font-size:.63rem;font-family:'JetBrains Mono',monospace;color:var(--t);flex-shrink:0">${f.v} ${f.u} <span style="color:var(--tm)">${r.pct.toFixed(1)}%</span></div>
+    </div>`;
+  }).join('');
+
+  let rows=results.map(r=>{
+    const f=fD(r.dose);const rc=r.ray.includes('α')?'var(--d)':'var(--t)';
+    return`<tr><td style="color:${rc};font-weight:600">${r.n}</td><td>${r.hl}</td><td>${r.ray}</td><td style="font-family:inherit;font-size:.65rem">${r.org}</td><td>${r.e50.toExponential(1)}</td><td>${f.v} ${f.u}</td><td>${r.pct.toFixed(1)}%</td></tr>`;
+  }).join('');
+
+  document.getElementById('chain-result').classList.remove('hidden');
+  document.getElementById('chain-rc').innerHTML=`
+    <div class="dv" style="color:var(--${mSv<6?'g':mSv<20?'w':'d'})">${fd.v} <span class="du">${fd.u}</span></div>
+    <div style="text-align:center;font-size:.7rem;color:var(--tm)">Dose totale chaîne complète (${eq==='secular'?'équilibre séculaire':'chaîne rompue'})</div>
+    <div style="text-align:center;margin-top:6px"><span class="tag ${itp.tg}">${itp.l}</span></div>
+    <div class="ib">${itp.t}</div>
+    <div style="margin-top:12px;font-size:.73rem;font-weight:600;color:var(--a);margin-bottom:6px">Top contributeurs à la dose</div>
+    ${bars}
+    <table style="margin-top:10px">
+      <thead><tr><th>Nucléide</th><th>T½</th><th>Ray.</th><th>Organes</th><th>e(50)</th><th>Dose</th><th>%</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr style="border-top:2px solid var(--a)"><td colspan="5"><b>TOTAL CHAÎNE</b></td><td><b style="color:var(--a)">${fd.v} ${fd.u}</b></td><td><b>100%</b></td></tr></tfoot>
+    </table>
+    ${eq==='secular'?`<div class="ib" style="margin-top:8px;border-color:var(--w)">⚠️ <b>Équilibre séculaire :</b> Chaque descendant a la même activité que le parent (Bq). Valide pour les minerais anciens, sources géologiques. Pour l'uranium enrichi récent ou UF₆, la chaîne est rompue après U-234 → utiliser le mode "chaîne rompue".</div>`:
+    `<div class="ib" style="margin-top:8px;border-color:var(--tl)">ℹ️ <b>Chaîne rompue :</b> Seul le nucléide parent contribue. Cas de l'uranium fraîchement enrichi, UF₆, combustible neuf.</div>`}`;
+  document.getElementById('chain-result').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ URANIUM MIXTURE CALCULATION ═══
+function showUmix(){
+  const k=document.getElementById('umix').value;
+  if(!k)return;
+  const mix=U_MIX[k];
+  // Display composition
+}
+function calcUmix(){
+  const mk=document.getElementById('umix').value,mass=+document.getElementById('umass').value,
+    pw=document.getElementById('umix-pw').value,at=document.getElementById('umix-t').value;
+  if(!mk||!mass)return;
+  const mix=U_MIX[mk];
+  // Activity of each isotope = mass_fraction × mass × specific_activity
+  const iso=[
+    {n:"U-234",mass_mg:mass*mix.pct234/100,sa:U_SA["U-234"]},
+    {n:"U-235",mass_mg:mass*mix.pct235/100,sa:U_SA["U-235"]},
+    {n:"U-238",mass_mg:mass*mix.pct238/100,sa:U_SA["U-238"]},
+  ];
+  iso.forEach(i=>i.bq=i.mass_mg*i.sa);
+  const totalBq=iso.reduce((s,i)=>s+i.bq,0);
+
+  // e(50) for each isotope
+  const e50s={ // CIPR 137 (OIR), travailleur, DAMA 5 µm
+    "U-234":{inh_F:2.5e-7,inh_M:1.4e-6,inh_S:1.3e-5,ing:3.5e-8},
+    "U-235":{inh_F:2.3e-7,inh_M:1.3e-6,inh_S:1.2e-5,ing:3.2e-8},
+    "U-238":{inh_F:2.2e-7,inh_M:1.2e-6,inh_S:1.2e-5,ing:3.1e-8}};
+  const eKey=pw==='inh'?'inh_'+at:'ing';
+
+  let totalDose=0;const res=[];
+  for(const i of iso){
+    const e50=e50s[i.n][eKey]||e50s[i.n].inh_M;
+    const dose=i.bq*e50;
+    totalDose+=dose;
+    res.push({...i,e50,dose});
+  }
+  res.forEach(r=>r.pct=totalDose>0?(r.dose/totalDose*100):0);
+
+  const fd=fD(totalDose);const mSv=totalDose*1e3;const itp=ip(mSv);
+  const maxD=Math.max(...res.map(r=>r.dose));
+  let bars=res.map(r=>{
+    const f=fD(r.dose);
+    return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+      <div style="width:50px;font-size:.65rem;text-align:right;color:var(--tm);flex-shrink:0">${r.n}</div>
+      <div style="flex:1;height:14px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="width:${r.dose/maxD*100}%;height:100%;background:var(--d);border-radius:3px;opacity:.7"></div></div>
+      <div style="width:100px;font-size:.63rem;font-family:'JetBrains Mono',monospace;color:var(--d);flex-shrink:0">${f.v} ${f.u} ${r.pct.toFixed(0)}%</div>
+    </div>`;
+  }).join('');
+
+  let rows=res.map(r=>{
+    const f=fD(r.dose);
+    return`<tr><td style="color:var(--d);font-weight:600">${r.n}</td><td>${r.mass_mg.toFixed(4)}</td><td>${r.bq.toFixed(0)}</td><td>${r.e50.toExponential(1)}</td><td>${f.v} ${f.u}</td><td>${r.pct.toFixed(1)}%</td></tr>`;
+  }).join('');
+
+  document.getElementById('chain-result').classList.remove('hidden');
+  document.getElementById('chain-rc').innerHTML=`
+    <div class="dv" style="color:var(--${mSv<6?'g':mSv<20?'w':'d'})">${fd.v} <span class="du">${fd.u}</span></div>
+    <div style="text-align:center;font-size:.7rem;color:var(--tm)">${mix.name} — ${mass} mg — ${pw==='inh'?'inhalation type '+at:'ingestion'}</div>
+    <div style="text-align:center;margin-top:6px"><span class="tag ${itp.tg}">${itp.l}</span></div>
+    <div style="margin-top:10px">${bars}</div>
+    <table style="margin-top:10px">
+      <thead><tr><th>Isotope</th><th>Masse (mg)</th><th>Activité (Bq)</th><th>e(50)</th><th>Dose</th><th>%</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr style="border-top:2px solid var(--a)"><td><b>TOTAL</b></td><td><b>${mass}</b></td><td><b>${totalBq.toFixed(0)}</b></td><td></td><td><b style="color:var(--a)">${fd.v} ${fd.u}</b></td><td><b>100%</b></td></tr></tfoot>
+    </table>
+    <div class="ib" style="margin-top:8px">
+      <b>Point clé :</b> L'U-234 a une activité spécifique ~18600× supérieure à l'U-238 et ~2900× supérieure à l'U-235. 
+      Même en faible proportion massique, il domine souvent l'activité et la dose, surtout dans l'uranium enrichi.
+      ${mk==='enr93'||mk==='enr20'?'<br>⚠️ Pour l\'uranium hautement enrichi, la toxicité radiologique domine la toxicité chimique.':'<br>Pour l\'uranium naturel/appauvri, la toxicité chimique rénale domine souvent la toxicité radiologique.'}
+    </div>`;
+  document.getElementById('chain-result').scrollIntoView({behavior:'smooth'});
+}
+
+// P(χ² > x) pour k ddl — approximation de Wilson-Hilferty
+function pChi2(x,k){
+  if(k<1)return 1;
+  const z=(Math.cbrt(x/k)-(1-2/(9*k)))/Math.sqrt(2/(9*k));
+  const t=1/(1+.3275911*Math.abs(z/Math.SQRT2));
+  const erf=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-z*z/2);
+  return z>=0?.5*(1-erf):.5*(1+erf);
+}
+
+// ═══ AUTO-TEST MIODOSE VALIDATION ═══
+function runAutoTest(){
+  let html='',pass=0,fail=0;
+  function test(name,got,expected,tolerance,unit=''){
+    const ratio=got/expected;
+    const ok=Math.abs(ratio-1)<=tolerance;
+    if(ok)pass++;else fail++;
+    const pct=((ratio-1)*100).toFixed(1);
+    html+=`<tr style="color:${ok?'var(--g)':'var(--d)'}"><td>${ok?'✅':'❌'}</td><td style="font-family:inherit">${name}</td><td>${expected<1e-3&&expected!==0?expected.toExponential(2):expected}${unit}</td><td>${typeof got==='number'?(Math.abs(got)<1e-3&&got!==0?got.toExponential(2):got<10?got.toFixed(3):got.toFixed(0)):got}${unit}</td><td>${pct}%</td></tr>`;
+  }
+
+  html='<table style="margin-top:10px"><thead><tr><th></th><th>Test</th><th>Attendu</th><th>Obtenu</th><th>Écart</th></tr></thead><tbody>';
+
+  // Test 1: MIODOSE reference case — Cs-137, whole body 3500 Bq at J+3
+  // MIODOSE: Incorporation = 5610, e(50) OIR = 9.33e-9, Dose = 0.0523 mSv
+  const r3=getFrac('Cs-137','inh','F','whole',3);
+  const incorp=3500/r3;
+  const dc=gDC('Cs-137','inh','F');
+  const dose=incorp*dc.c*1e3; // mSv
+
+  test('Cs-137 R(3) corps entier [bi-exp]',r3,0.624,0.15);
+  test('Cs-137 incorporation (3500 Bq J+3)',incorp,5610,0.15,' Bq');
+  test('Cs-137 e(50) OIR Type F',dc.c,9.33e-9,0.02);
+  test('Cs-137 dose MIODOSE ref',dose,0.0523,0.20,' mSv');
+
+  // Test 2: Coefficient checks vs CIPR 68
+  const checks=[ // CIPR 68 — travailleur, DAMA 5 µm (arrêté du 1er sept. 2003)
+    ['H-3 inh F','H-3','F',1.8e-11],
+    ['Co-60 inh M','Co-60','M',7.1e-9],
+    ['Sr-90 inh F','Sr-90','F',3.0e-8],
+    ['Cs-137 inh F','Cs-137','F',6.7e-9],
+    ['I-131 inh F (aérosol)','I-131','F',1.1e-8],
+    ['I-131 inh V (vapeur I₂)','I-131','V',2.0e-8],
+    ['Pu-239 inh M','Pu-239','M',3.2e-5],
+    ['Am-241 inh M','Am-241','M',2.7e-5],
+    ['U-238 inh M','U-238','M',1.6e-6],
+  ];
+  for(const[name,nk,at,ref]of checks){
+    const v=DB[nk]?.inh?.[at];
+    if(v!=null)test(name+' (P68)',v,ref,0.05);
+  }
+
+  // Test 2c: coefficients OIR (CIPR 130-141, DAMA 5 µm) — BfS 2023 / IRSN 2023
+  const oirChecks=[['Cs-137 F','Cs-137','F',9.3e-9],['Co-60 M','Co-60','M',6.2e-9],['Sr-90 F','Sr-90','F',3.2e-8],
+    ['I-131 F','I-131','F',1.1e-8],['I-131 I₂ vapeur','I-131','V',1.7e-8],['U-238 M','U-238','M',1.2e-6],
+    ['Pu-239 M','Pu-239','M',1.4e-5],['Pu-239 S','Pu-239','S',1.7e-5]];
+  for(const[name,nk,at,ref]of oirChecks){const v=DB[nk]?.oir?.[at];if(v!=null)test(name+' (OIR)',v,ref,0.05);}
+
+  // Test 2b: cas MIODOSE I-131 — 3 incorporations (vapeur), comptage thyroïdien
+  // Incorporations supposées au milieu d'intervalles de 14 j (11/09, 25/09, 09/10/2014)
+  // Mesures : 510 Bq (18/09), 170 Bq (02/10), 24500 Bq (16/10) — MIODOSE : 3,55 mSv
+  {
+    const tI=[0,14,28],tM=[[7,510],[21,170],[35,24500]],I=[];
+    const R=t=>getFrac('I-131','inh','V','thyroid',t);
+    for(let k=0;k<3;k++){let r=tM[k][1];for(let j=0;j<k;j++)r-=I[j]*R(tM[k][0]-tI[j]);I.push(r/R(tM[k][0]-tI[k]));}
+    const eV=DB['I-131'].inh.V; // MIODOSE v1 (2014) = CIPR 68, I₂ vapeur 2,0E-8
+    test('I-131 incorporation 1',I[0],3660,0.15,' Bq');
+    test('I-131 incorporation 3',I[2],175000,0.15,' Bq');
+    test('I-131 dose totale (vapeur, P68)',(I[0]+I[1]+I[2])*eV*1e3,3.55,0.15,' mSv');
+  }
+
+  // Test 3: Coherence
+  const csF=gDC('Cs-137','inh','F'),csM=gDC('Cs-137','inh','M');
+  test(getModel()==='oir'?'Cs-137 OIR : e(50) F > M':'Cs-137 P68 : e(50) F < M',(getModel()==='oir'?csF.c>csM.c:csF.c<csM.c)?1:0,1,0);
+  const puM=gDC('Pu-239','inh','M'),puIng=gDC('Pu-239','ing','');
+  test('Pu-239: inh/ing ratio > 100',puM.c/puIng.c,200,0.5);
+  const i131ing=gDC('I-131','ing',''),i131inh=gDC('I-131','inh','F');
+  test('I-131: ing > inh',i131ing.c>i131inh.c?1:0,1,0);
+
+  // Test 4: Bi-exponential drops faster than mono for early days
+  const r1_bi=getFrac('Cs-137','inh','F','whole',1);
+  test('Cs-137 R(1) bi-exp < 0.95',r1_bi<0.95?1:0,1,0);
+
+  html+=`</tbody></table>`;
+  html=`<div style="text-align:center;margin:10px 0"><span class="tag ${fail===0?'tg':'tr'}" style="font-size:.8rem;padding:4px 12px">${fail===0?'✅ TOUS LES TESTS PASSÉS':'❌ '+fail+' ÉCHEC(S)'} — ${pass}/${pass+fail}</span></div>
+  <div style="text-align:center;font-size:.68rem;color:var(--tm);margin-bottom:6px">Modèle: ${getModel().toUpperCase()} • Rétention: ${getRetModel()}</div>`+html;
+
+  if(fail===0){
+    html+=`<div class="ib" style="margin-top:8px;border-color:var(--g)">✅ <b>Validation réussie.</b> Les résultats sont cohérents avec le cas de référence MIODOSE (AMTSN 2022, Broggio et al.) à ±15-20%. L'écart résiduel est dû au modèle bi-exponentiel simplifié vs modèle compartimentel complet (HRTM + systémique).</div>`;
+  } else {
+    html+=`<div class="ib" style="margin-top:8px;border-color:var(--d)">⚠️ <b>Écarts détectés.</b> Vérifier le modèle sélectionné et les paramètres de rétention.</div>`;
+  }
+  document.getElementById('autotest-result').innerHTML=html;
+}
+
+init();
+</script>
+</body>
+</html>
